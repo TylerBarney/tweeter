@@ -31,7 +31,29 @@ const AuthenticationFormLayout = (props: Props) => {
           <h1 className="h4 mb-3 fw-normal">Or</h1>
           <h1 className="h5 mb-3 fw-normal">{props.oAuthHeading}</h1>
 
-          <OAuth />
+          <div className="text-center mb-3">
+            <OAuth buttonName="Google" oauthName="google" iconName="google" />
+
+            <OAuth
+              buttonName="Facebook"
+              oauthName="facebook"
+              iconName="facebook"
+            />
+
+            <OAuth
+              buttonName="Twitter"
+              oauthName="twitter"
+              iconName="twitter"
+            />
+
+            <OAuth
+              buttonName="Linkedin"
+              oauthName="linkedin"
+              iconName="linkedin"
+            />
+
+            <OAuth buttonName="Github" oauthName="github" iconName="github" />
+          </div>
 
           <div className="checkbox mb-3">
             <label>
