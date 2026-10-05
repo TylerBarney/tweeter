@@ -40,21 +40,24 @@ const Login = (props: Props) => {
     presenterRef.current = new LoginPresenter(listener);
   }
 
+  //should this go into the presenter? If so, how?
   const checkSubmitButtonStatus = (): boolean => {
     return !alias || !password;
+  };
+
+  const doLogin = async () => {
+    return presenterRef.current!.doLogin(
+      alias,
+      password,
+      rememberMe,
+      props.originalUrl,
+    );
   };
 
   const inputFieldFactory = () => {
     return (
       <AuthenticationFields
-        onEnter={() =>
-          presenterRef.current!.doLogin(
-            alias,
-            password,
-            rememberMe,
-            props.originalUrl,
-          )
-        }
+        onEnter={doLogin}
         alias={alias}
         password={password}
         setAlias={setAlias}
@@ -82,14 +85,7 @@ const Login = (props: Props) => {
       setRememberMe={setRememberMe}
       submitButtonDisabled={checkSubmitButtonStatus}
       isLoading={isLoading}
-      submit={() =>
-        presenterRef.current!.doLogin(
-          alias,
-          password,
-          rememberMe,
-          props.originalUrl,
-        )
-      }
+      submit={doLogin}
     />
   );
 };
