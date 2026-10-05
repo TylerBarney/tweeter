@@ -3,11 +3,11 @@ import "bootstrap/dist/css/bootstrap.css";
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthenticationFormLayout from "../AuthenticationFormLayout";
-import { AuthToken, User } from "tweeter-shared";
 import AuthenticationFields from "../AuthenticationFields";
 import { useMessageActions } from "../../toaster/MessageHooks";
 import { useUserInfoActions } from "../../userInfo/UserInfoHooks";
-import { LoginView, LoginPresenter } from "../../../presenter/LoginPresenter";
+import { LoginPresenter } from "../../../presenter/LoginPresenter";
+import { AuthenticationView } from "../../../presenter/AuthenticationPresenter";
 
 interface Props {
   originalUrl?: string;
@@ -23,16 +23,11 @@ const Login = (props: Props) => {
   const { updateUserInfo } = useUserInfoActions();
   const { displayErrorMessage } = useMessageActions();
 
-  const listener: LoginView = {
-    navigate: (url: string) => navigate(url),
-    displayErrorMessage: (message: string) => displayErrorMessage(message),
-    updateUserInfo: (
-      currentUser: User,
-      displayedUser: User | null,
-      authToken: AuthToken,
-      remember: boolean,
-    ) => updateUserInfo(currentUser, displayedUser, authToken, remember),
-    updateIsLoading: (isLoading: boolean) => setIsLoading(isLoading),
+  const listener: AuthenticationView = {
+    navigate: navigate,
+    displayErrorMessage: displayErrorMessage,
+    updateUserInfo: updateUserInfo,
+    updateIsLoading: setIsLoading,
   };
 
   const presenterRef = useRef<LoginPresenter | null>(null);
@@ -40,13 +35,12 @@ const Login = (props: Props) => {
     presenterRef.current = new LoginPresenter(listener);
   }
 
-  //should this go into the presenter? If so, how?
   const checkSubmitButtonStatus = (): boolean => {
     return !alias || !password;
   };
 
   const doLogin = async () => {
-    return presenterRef.current!.doLogin(
+    return presenterRef.current!.login(
       alias,
       password,
       rememberMe,

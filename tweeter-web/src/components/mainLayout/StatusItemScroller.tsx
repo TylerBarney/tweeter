@@ -26,7 +26,7 @@ const StatusItemScroller = (props: Props) => {
   const listener: StatusItemView = {
     addItems: (newItems: Status[]) =>
       setItems((previousItems) => [...previousItems, ...newItems]),
-    displayErrorMessage: (message: string) => displayErrorMessage(message),
+    displayErrorMessage: displayErrorMessage,
   };
 
   const presenter = useRef<StatusItemPresenter | null>(null);
