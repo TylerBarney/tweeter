@@ -1,5 +1,6 @@
 import { AuthToken, User } from "tweeter-shared";
 import { UserService } from "../model.service/UserService";
+import { FollowService } from "../model.service/FollowService";
 
 export interface UserInfoView {
   displayInfoMessage: (
@@ -19,11 +20,11 @@ export interface UserInfoView {
 
 export class UserInfoPresenter {
   private view: UserInfoView;
-  private service: UserService;
+  private service: FollowService;
 
   public constructor(view: UserInfoView) {
     this.view = view;
-    this.service = new UserService();
+    this.service = new FollowService();
   }
 
   public async setNumbFollowees(authToken: AuthToken, displayedUser: User) {
@@ -98,30 +99,8 @@ export class UserInfoPresenter {
         this.view.displayErrorMessage(
           `Failed to follow user because of exception: ${error}`,
         ),
-      (authToken, userToFollow) => this.follow(authToken, userToFollow),
+      (authToken, userToFollow) => this.service.follow(authToken, userToFollow),
     );
-  }
-
-  private async follow(
-    authToken: AuthToken,
-    userToFollow: User,
-  ): Promise<[followerCount: number, followeeCount: number]> {
-    // Pause so we can see the follow message. Remove when connected to the server
-    await new Promise((f) => setTimeout(f, 2000));
-
-    // TODO: Call the server
-
-    const followerCount = await this.service.getFollowerCount(
-      authToken,
-      userToFollow,
-    );
-
-    const followeeCount = await this.service.getFolloweeCount(
-      authToken,
-      userToFollow,
-    );
-
-    return [followerCount, followeeCount];
   }
 
   public async unfollowDisplayedUser(
@@ -141,7 +120,8 @@ export class UserInfoPresenter {
         this.view.displayErrorMessage(
           `Failed to unfollow user because of exception: ${error}`,
         ),
-      (authToken, userToUnfollow) => this.unfollow(authToken, userToUnfollow),
+      (authToken, userToUnfollow) =>
+        this.service.unfollow(authToken, userToUnfollow),
     );
   }
 
@@ -176,26 +156,5 @@ export class UserInfoPresenter {
       this.view.deleteMessage(toast);
       this.view.setIsLoading(false);
     }
-  }
-
-  private async unfollow(
-    authToken: AuthToken,
-    userToUnfollow: User,
-  ): Promise<[followerCount: number, followeeCount: number]> {
-    // Pause so we can see the unfollow message. Remove when connected to the server
-    await new Promise((f) => setTimeout(f, 2000));
-
-    // TODO: Call the server
-
-    const followerCount = await this.service.getFollowerCount(
-      authToken,
-      userToUnfollow,
-    );
-
-    const followeeCount = await this.service.getFolloweeCount(
-      authToken,
-      userToUnfollow,
-    );
-    return [followerCount, followeeCount];
   }
 }
