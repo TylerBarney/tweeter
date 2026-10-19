@@ -1,8 +1,27 @@
 import { Buffer } from "buffer";
-import { AuthenticationPresenter } from "./AuthenticationPresenter";
+import { AuthToken, User } from "tweeter-shared";
+import { UserService } from "../model.service/UserService";
 
-export class RegisterPresenter extends AuthenticationPresenter {
-  private imageBytes: Uint8Array = new Uint8Array();
+export interface RegisterView {
+  navigate: (url: string) => void;
+  displayErrorMessage: (message: string) => void;
+  authenticated: (
+    user: User,
+    authToken: AuthToken,
+    rememberMe: boolean,
+  ) => void;
+  setImageUrl: (url: string) => void;
+  setImageFileExtension: (fileExtension: string) => void;
+  setImageBytes: (bytes: Uint8Array) => void;
+}
+
+export class RegisterPresenter {
+  private view: RegisterView;
+  private service: UserService;
+  public constructor(view: RegisterView) {
+    this.view = view;
+    this.service = new UserService();
+  }
 
   public async register(
     firstName: string,
@@ -10,23 +29,31 @@ export class RegisterPresenter extends AuthenticationPresenter {
     alias: string,
     password: string,
     imageFileExtension: string,
+    imageBytes: Uint8Array,
     rememberMe: boolean,
-  ): Promise<void> {
-    super.authenticate(rememberMe, "register", async () =>
-      this.service.register(
+  ) {
+    try {
+      const [user, authToken] = await this.service.register(
         firstName,
         lastName,
         alias,
         password,
-        this.imageBytes,
+        imageBytes,
         imageFileExtension,
-      ),
-    );
+      );
+
+      this.view.authenticated(user, authToken, rememberMe);
+      this.view.navigate(`/feed/${user.alias}`);
+    } catch (error) {
+      this.view.displayErrorMessage(
+        `Failed to register user because of exception: ${error}`,
+      );
+    }
   }
 
   public handleImageFile(file: File | undefined) {
     if (file) {
-      this.view.setImageUrl?.(URL.createObjectURL(file));
+      this.view.setImageUrl(URL.createObjectURL(file));
 
       const reader = new FileReader();
       reader.onload = (event: ProgressEvent<FileReader>) => {
@@ -41,18 +68,18 @@ export class RegisterPresenter extends AuthenticationPresenter {
           "base64",
         );
 
-        this.imageBytes = bytes;
+        this.view.setImageBytes(bytes);
       };
       reader.readAsDataURL(file);
 
       // Set image file extension (and move to a separate method)
       const fileExtension = this.getFileExtension(file);
       if (fileExtension) {
-        this.view.setImageFileExtension?.(fileExtension);
+        this.view.setImageFileExtension(fileExtension);
       }
     } else {
-      this.view.setImageUrl?.("");
-      this.imageBytes = new Uint8Array();
+      this.view.setImageUrl("");
+      this.view.setImageBytes(new Uint8Array());
     }
   }
 

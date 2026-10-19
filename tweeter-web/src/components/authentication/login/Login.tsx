@@ -6,8 +6,10 @@ import AuthenticationFormLayout from "../AuthenticationFormLayout";
 import AuthenticationFields from "../AuthenticationFields";
 import { useMessageActions } from "../../toaster/MessageHooks";
 import { useUserInfoActions } from "../../userInfo/UserInfoHooks";
-import { LoginPresenter } from "../../../presenter/LoginPresenter";
-import { AuthenticationView } from "../../../presenter/AuthenticationPresenter";
+import {
+  LoginPresenter,
+  LoginView,
+} from "../../../presenter/LoginPresenter";
 
 interface Props {
   originalUrl?: string;
@@ -23,16 +25,16 @@ const Login = (props: Props) => {
   const { updateUserInfo } = useUserInfoActions();
   const { displayErrorMessage } = useMessageActions();
 
-  const listener: AuthenticationView = {
+  const view: LoginView = {
     navigate: navigate,
     displayErrorMessage: displayErrorMessage,
-    updateUserInfo: updateUserInfo,
-    updateIsLoading: setIsLoading,
+    authenticated: (user, authToken, rememberMe) =>
+      updateUserInfo(user, user, authToken, rememberMe),
   };
 
   const presenterRef = useRef<LoginPresenter | null>(null);
   if (!presenterRef.current) {
-    presenterRef.current = new LoginPresenter(listener);
+    presenterRef.current = new LoginPresenter(view);
   }
 
   const checkSubmitButtonStatus = (): boolean => {
@@ -40,12 +42,17 @@ const Login = (props: Props) => {
   };
 
   const doLogin = async () => {
-    return presenterRef.current!.login(
-      alias,
-      password,
-      rememberMe,
-      props.originalUrl,
-    );
+    setIsLoading(true);
+    try {
+      await presenterRef.current!.login(
+        alias,
+        password,
+        rememberMe,
+        props.originalUrl,
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const inputFieldFactory = () => {

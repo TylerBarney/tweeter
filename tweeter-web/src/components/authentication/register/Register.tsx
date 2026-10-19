@@ -6,14 +6,17 @@ import AuthenticationFormLayout from "../AuthenticationFormLayout";
 import AuthenticationFields from "../AuthenticationFields";
 import { useMessageActions } from "../../toaster/MessageHooks";
 import { useUserInfoActions } from "../../userInfo/UserInfoHooks";
-import { AuthenticationView } from "../../../presenter/AuthenticationPresenter";
-import { RegisterPresenter } from "../../../presenter/RegisterPresenter";
+import {
+  RegisterPresenter,
+  RegisterView,
+} from "../../../presenter/RegisterPresenter";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [alias, setAlias] = useState("");
   const [password, setPassword] = useState("");
+  const [imageBytes, setImageBytes] = useState<Uint8Array>(new Uint8Array());
   const [imageUrl, setImageUrl] = useState<string>("");
   const [imageFileExtension, setImageFileExtension] = useState<string>("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -23,13 +26,14 @@ const Register = () => {
   const { updateUserInfo } = useUserInfoActions();
   const { displayErrorMessage } = useMessageActions();
 
-  const view: AuthenticationView = {
+  const view: RegisterView = {
     navigate: navigate,
     displayErrorMessage: displayErrorMessage,
-    updateUserInfo: updateUserInfo,
-    updateIsLoading: setIsLoading,
+    authenticated: (user, authToken, rememberMe) =>
+      updateUserInfo(user, user, authToken, rememberMe),
     setImageUrl: setImageUrl,
     setImageFileExtension: setImageFileExtension,
+    setImageBytes: setImageBytes,
   };
 
   const presenterRef = useRef<RegisterPresenter | null>(null);
@@ -59,15 +63,22 @@ const Register = () => {
     }
   };
 
-  const doRegister = () =>
-    presenterRef.current!.register(
-      firstName,
-      lastName,
-      alias,
-      password,
-      imageFileExtension,
-      rememberMe,
-    );
+  const doRegister = async () => {
+    setIsLoading(true);
+    try {
+      await presenterRef.current!.register(
+        firstName,
+        lastName,
+        alias,
+        password,
+        imageFileExtension,
+        imageBytes,
+        rememberMe,
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const inputFieldFactory = () => {
     return (
