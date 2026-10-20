@@ -17,7 +17,6 @@ const PostStatus = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const view: PostStatusView = {
-    setIsLoading: setIsLoading,
     displayInfoMessage: displayInfoMessage,
     displayErrorMessage: displayErrorMessage,
     deleteMessage: deleteMessage,
@@ -31,7 +30,12 @@ const PostStatus = () => {
 
   const submitPost = async (event: React.MouseEvent) => {
     event.preventDefault();
-    presenterRef.current!.submitPost(post, currentUser!, authToken!);
+    setIsLoading(true);
+    try {
+      await presenterRef.current!.submitPost(post, currentUser!, authToken!);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const clearPost = (event: React.MouseEvent) => {

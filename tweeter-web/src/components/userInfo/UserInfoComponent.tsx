@@ -29,7 +29,6 @@ const UserInfo = () => {
     navigate: navigate,
     setFolloweeCount: setFolloweeCount,
     setIsFollower: setIsFollower,
-    setIsLoading: setIsLoading,
     setFollowerCount: setFollowerCount,
     setDisplayedUser: setDisplayedUser,
   };
@@ -49,8 +48,8 @@ const UserInfo = () => {
       currentUser!,
       displayedUser!,
     );
-    presenterRef.current!.setNumbFollowees(authToken!, displayedUser!);
-    presenterRef.current!.setNumbFollowers(authToken!, displayedUser!);
+    presenterRef.current!.getFollowerCount(authToken!, displayedUser!);
+    presenterRef.current!.getFolloweeCount(authToken!, displayedUser!);
   }, [displayedUser]);
 
   const switchToLoggedInUser = (event: React.MouseEvent): void => {
@@ -62,14 +61,24 @@ const UserInfo = () => {
     event: React.MouseEvent,
   ): Promise<void> => {
     event.preventDefault();
-    presenterRef.current!.followDisplayedUser(displayedUser!, authToken!);
+    setIsLoading(true);
+    try {
+      await presenterRef.current!.followUser(authToken!, displayedUser!);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const unfollowDisplayedUser = async (
     event: React.MouseEvent,
   ): Promise<void> => {
     event.preventDefault();
-    presenterRef.current!.unfollowDisplayedUser(displayedUser!, authToken!);
+    setIsLoading(true);
+    try {
+      await presenterRef.current!.unfollowUser(authToken!, displayedUser!);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
