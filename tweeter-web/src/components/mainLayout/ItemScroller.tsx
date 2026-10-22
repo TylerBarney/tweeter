@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useParams } from "react-router-dom";
 import { useMessageActions } from "../toaster/MessageHooks";
@@ -8,6 +8,7 @@ import {
   PagedItemView,
 } from "../../presenter/PagedItemPresenter";
 import { Service } from "../../model.service/Service";
+import usePresenter from "../hooks/usePresenter";
 
 interface Props<T, S extends Service> {
   featureUrl: string;
@@ -29,10 +30,10 @@ const ItemScroller = <T, S extends Service>(props: Props<T, S>) => {
     displayErrorMessage: displayErrorMessage,
   };
 
-  const presenterRef = useRef<PagedItemPresenter<T, S> | null>(null);
-  if (!presenterRef.current) {
-    presenterRef.current = props.presenterFactory(listener);
-  }
+  const presenter = usePresenter(
+    () => listener,
+    (view) => props.presenterFactory(view),
+  );
 
   // Update the displayed user context variable whenever the displayedUser url parameter changes. This allows browser forward and back buttons to work correctly.
   useEffect(() => {
@@ -41,13 +42,11 @@ const ItemScroller = <T, S extends Service>(props: Props<T, S>) => {
       displayedUserAliasParam &&
       displayedUserAliasParam != displayedUser!.alias
     ) {
-      presenterRef
-        .current!.getUser(authToken!, displayedUserAliasParam!)
-        .then((toUser) => {
-          if (toUser) {
-            setDisplayedUser(toUser);
-          }
-        });
+      presenter.getUser(authToken!, displayedUserAliasParam!).then((toUser) => {
+        if (toUser) {
+          setDisplayedUser(toUser);
+        }
+      });
     }
   }, [displayedUserAliasParam]);
 
@@ -59,11 +58,11 @@ const ItemScroller = <T, S extends Service>(props: Props<T, S>) => {
 
   const reset = async () => {
     setItems(() => []);
-    presenterRef.current!.reset();
+    presenter.reset();
   };
 
   const loadMoreItems = async () => {
-    presenterRef.current!.loadMoreItems(authToken!, displayedUser!.alias);
+    presenter.loadMoreItems(authToken!, displayedUser!.alias);
   };
 
   return (
@@ -72,7 +71,7 @@ const ItemScroller = <T, S extends Service>(props: Props<T, S>) => {
         className="pr-0 mr-0"
         dataLength={items.length}
         next={() => loadMoreItems()}
-        hasMore={presenterRef.current!.hasMoreItems}
+        hasMore={presenter.hasMoreItems}
         loader={<h4>Loading...</h4>}
       >
         {items.map((item, index) => (

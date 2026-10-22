@@ -1,5 +1,4 @@
 import { Buffer } from "buffer";
-import { AuthToken, User } from "tweeter-shared";
 import {
   AuthenticationPresenter,
   AuthenticationView,

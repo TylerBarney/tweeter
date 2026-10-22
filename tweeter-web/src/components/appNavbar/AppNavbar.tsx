@@ -8,7 +8,8 @@ import {
   AppNavBarPresenter,
   AppNavBarView,
 } from "../../presenter/AppNavBarPresenter";
-import { useRef } from "react";
+import AppNavBarItem from "./AppNavBarItem";
+import usePresenter from "../hooks/usePresenter";
 
 const AppNavbar = () => {
   const location = useLocation();
@@ -26,13 +27,13 @@ const AppNavbar = () => {
     navigate: navigate,
   };
 
-  const presenterRef = useRef<AppNavBarPresenter | null>(null);
-  if (!presenterRef.current) {
-    presenterRef.current = new AppNavBarPresenter(view);
-  }
+  const presenter = usePresenter(
+    () => view,
+    (view) => new AppNavBarPresenter(view),
+  );
 
   const logOut = async () => {
-    presenterRef.current!.logOut(authToken!);
+    presenter.logOut(authToken!);
   };
 
   return (
@@ -61,54 +62,26 @@ const AppNavbar = () => {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="ml-auto">
-            <Nav.Item>
-              <NavLink
-                to={`/feed/${displayedUser!.alias}`}
-                className={() =>
-                  location.pathname.startsWith("/feed/")
-                    ? "nav-link active"
-                    : "nav-link"
-                }
-              >
-                Feed
-              </NavLink>
-            </Nav.Item>
-            <Nav.Item>
-              <NavLink
-                to={`/story/${displayedUser!.alias}`}
-                className={() =>
-                  location.pathname.startsWith("/story/")
-                    ? "nav-link active"
-                    : "nav-link"
-                }
-              >
-                Story
-              </NavLink>
-            </Nav.Item>
-            <Nav.Item>
-              <NavLink
-                to={`/followees/${displayedUser!.alias}`}
-                className={() =>
-                  location.pathname.startsWith("/followees/")
-                    ? "nav-link active"
-                    : "nav-link"
-                }
-              >
-                Followees
-              </NavLink>
-            </Nav.Item>
-            <Nav.Item>
-              <NavLink
-                to={`/followers/${displayedUser!.alias}`}
-                className={() =>
-                  location.pathname.startsWith("/followers/")
-                    ? "nav-link active"
-                    : "nav-link"
-                }
-              >
-                Followers
-              </NavLink>
-            </Nav.Item>
+            <AppNavBarItem
+              featureName="Feed"
+              featurePath="/feed/"
+              alias={displayedUser!.alias}
+            />
+            <AppNavBarItem
+              featureName="Story"
+              featurePath="/story/"
+              alias={displayedUser!.alias}
+            />
+            <AppNavBarItem
+              featureName="Followees"
+              featurePath="/followees/"
+              alias={displayedUser!.alias}
+            />
+            <AppNavBarItem
+              featureName="Followers"
+              featurePath="/followers/"
+              alias={displayedUser!.alias}
+            />
             <Nav.Item>
               <NavLink
                 id="logout"

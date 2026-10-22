@@ -1,5 +1,5 @@
 import "./UserInfoComponent.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useMessageActions } from "../toaster/MessageHooks";
 import { useUserInfo, useUserInfoActions } from "./UserInfoHooks";
@@ -7,12 +7,15 @@ import {
   UserInfoPresenter,
   UserInfoView,
 } from "../../presenter/UserInfoPresenter";
+import UserInfoFollowButton from "./UserInfoFollowButton";
+import useAsyncHook from "../hooks/asyncHooks";
+import usePresenter from "../hooks/usePresenter";
 
 const UserInfo = () => {
   const [isFollower, setIsFollower] = useState(false);
   const [followeeCount, setFolloweeCount] = useState(-1);
   const [followerCount, setFollowerCount] = useState(-1);
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading, doAsync } = useAsyncHook();
 
   const { displayInfoMessage, displayErrorMessage, deleteMessage } =
     useMessageActions();
@@ -33,52 +36,42 @@ const UserInfo = () => {
     setDisplayedUser: setDisplayedUser,
   };
 
-  const presenterRef = useRef<UserInfoPresenter | null>(null);
-  if (!presenterRef.current) {
-    presenterRef.current = new UserInfoPresenter(view);
-  }
+  const presenter = usePresenter(
+    () => view,
+    (view) => new UserInfoPresenter(view),
+  );
 
   if (!displayedUser) {
     setDisplayedUser(currentUser!);
   }
 
   useEffect(() => {
-    presenterRef.current!.setIsFollowerStatus(
-      authToken!,
-      currentUser!,
-      displayedUser!,
-    );
-    presenterRef.current!.getFollowerCount(authToken!, displayedUser!);
-    presenterRef.current!.getFolloweeCount(authToken!, displayedUser!);
+    presenter.setIsFollowerStatus(authToken!, currentUser!, displayedUser!);
+    presenter.getFollowerCount(authToken!, displayedUser!);
+    presenter.getFolloweeCount(authToken!, displayedUser!);
   }, [displayedUser]);
 
   const switchToLoggedInUser = (event: React.MouseEvent): void => {
     event.preventDefault();
-    presenterRef.current!.switchToLoggedInUser(currentUser!, location.pathname);
+    presenter.switchToLoggedInUser(currentUser!, location.pathname);
   };
 
   const followDisplayedUser = async (
     event: React.MouseEvent,
   ): Promise<void> => {
     event.preventDefault();
-    setIsLoading(true);
-    try {
-      await presenterRef.current!.followUser(authToken!, displayedUser!);
-    } finally {
-      setIsLoading(false);
-    }
+    await doAsync(async () => {
+      await presenter.followUser(authToken!, displayedUser!);
+    });
   };
 
   const unfollowDisplayedUser = async (
     event: React.MouseEvent,
   ): Promise<void> => {
     event.preventDefault();
-    setIsLoading(true);
-    try {
-      await presenterRef.current!.unfollowUser(authToken!, displayedUser!);
-    } finally {
-      setIsLoading(false);
-    }
+    await doAsync(async () => {
+      await presenter.unfollowUser(authToken!, displayedUser!);
+    });
   };
 
   return (
@@ -123,43 +116,21 @@ const UserInfo = () => {
               {!displayedUser.equals(currentUser) && (
                 <div className="form-group">
                   {isFollower ? (
-                    <button
-                      id="unFollowButton"
-                      className="btn btn-md btn-secondary me-1"
-                      type="submit"
-                      style={{ width: "6em" }}
-                      disabled={isLoading}
-                      onClick={unfollowDisplayedUser}
-                    >
-                      {isLoading ? (
-                        <span
-                          className="spinner-border spinner-border-sm"
-                          role="status"
-                          aria-hidden="true"
-                        ></span>
-                      ) : (
-                        <div>Unfollow</div>
-                      )}
-                    </button>
+                    <UserInfoFollowButton
+                      isLoading={isLoading}
+                      buttonId="unFollowButton"
+                      buttonText="Unfollow"
+                      followOperationOnDisplayedUser={unfollowDisplayedUser}
+                      bootstrapClass="btn-secondary"
+                    />
                   ) : (
-                    <button
-                      id="followButton"
-                      className="btn btn-md btn-primary me-1"
-                      type="submit"
-                      style={{ width: "6em" }}
-                      disabled={isLoading}
-                      onClick={followDisplayedUser}
-                    >
-                      {isLoading ? (
-                        <span
-                          className="spinner-border spinner-border-sm"
-                          role="status"
-                          aria-hidden="true"
-                        ></span>
-                      ) : (
-                        <div>Follow</div>
-                      )}
-                    </button>
+                    <UserInfoFollowButton
+                      isLoading={isLoading}
+                      buttonId="followButton"
+                      bootstrapClass="btn-primary"
+                      followOperationOnDisplayedUser={followDisplayedUser}
+                      buttonText="Follow"
+                    />
                   )}
                 </div>
               )}

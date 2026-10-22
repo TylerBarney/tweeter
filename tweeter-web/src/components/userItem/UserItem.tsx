@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { User } from "tweeter-shared";
 import { useUserNavigation } from "../navigation/UserNavigationHooks";
+import { ReactNode } from "react";
 
 interface Props {
   user: User;
   featurePath: string;
+  children?: ReactNode;
 }
 
 const UserItem = (props: Props) => {
@@ -35,6 +37,7 @@ const UserItem = (props: Props) => {
                 {props.user.alias}
               </Link>
             </h2>
+            {props.children}
           </div>
         </div>
       </div>

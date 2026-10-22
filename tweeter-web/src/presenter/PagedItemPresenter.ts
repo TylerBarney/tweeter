@@ -2,13 +2,14 @@ import { AuthToken, User } from "tweeter-shared";
 import { UserService } from "../model.service/UserService";
 import { View, Presenter } from "./Presenter";
 import { Service } from "../model.service/Service";
-
 export interface PagedItemView<T> extends View {
   addItems: (newItems: T[]) => void;
 }
 
 export const PAGE_SIZE = 10;
-
+//Using Generics allows you to remove duplicate code by removing code whose only difference is
+// the type being acted on. In this case we removed duplicate code between UserItemPresenter and StatusItemPresenter by using a generic type
+// which was either User or Status. In this case we also pass in service type generics.
 export abstract class PagedItemPresenter<
   T,
   U extends Service,
@@ -65,6 +66,9 @@ export abstract class PagedItemPresenter<
     }, this.itemDescription());
   }
 
+  //Template Method lets children classes define functionality that may differ from child to child but fits into the
+  //overarching algorithm. LoadMoreItems is an algorithm that existed between FolloweePresenter, FollowerPresenter, StoryPresenter
+  // and PostStatusPresenter. We factored it out into PagedItemPresenter and then had them define the following functions
   protected abstract itemDescription(): string;
 
   protected abstract serviceFactory(): U;

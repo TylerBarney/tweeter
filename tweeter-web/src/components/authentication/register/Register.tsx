@@ -1,6 +1,6 @@
 import "./Register.css";
 import "bootstrap/dist/css/bootstrap.css";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthenticationFormLayout from "../AuthenticationFormLayout";
 import AuthenticationFields from "../AuthenticationFields";
@@ -10,6 +10,8 @@ import {
   RegisterPresenter,
   RegisterView,
 } from "../../../presenter/RegisterPresenter";
+import useAsyncHook from "../../hooks/asyncHooks";
+import usePresenter from "../../hooks/usePresenter";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
@@ -20,7 +22,7 @@ const Register = () => {
   const [imageUrl, setImageUrl] = useState<string>("");
   const [imageFileExtension, setImageFileExtension] = useState<string>("");
   const [rememberMe, setRememberMe] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading, doAsync } = useAsyncHook();
 
   const navigate = useNavigate();
   const { updateUserInfo } = useUserInfoActions();
@@ -36,10 +38,10 @@ const Register = () => {
     setImageBytes: setImageBytes,
   };
 
-  const presenterRef = useRef<RegisterPresenter | null>(null);
-  if (!presenterRef.current) {
-    presenterRef.current = new RegisterPresenter(view);
-  }
+  const presenter = usePresenter(
+    () => view,
+    (view) => new RegisterPresenter(view),
+  );
 
   const checkSubmitButtonStatus = (): boolean => {
     return (
@@ -54,7 +56,7 @@ const Register = () => {
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    presenterRef.current!.handleImageFile(file);
+    presenter.handleImageFile(file);
   };
 
   const registerOnEnter = (event: React.KeyboardEvent<HTMLElement>) => {
@@ -64,9 +66,8 @@ const Register = () => {
   };
 
   const doRegister = async () => {
-    setIsLoading(true);
-    try {
-      await presenterRef.current!.register(
+    await doAsync(async () => {
+      await presenter.register(
         firstName,
         lastName,
         alias,
@@ -75,9 +76,7 @@ const Register = () => {
         imageBytes,
         rememberMe,
       );
-    } finally {
-      setIsLoading(false);
-    }
+    });
   };
 
   const inputFieldFactory = () => {
@@ -137,7 +136,7 @@ const Register = () => {
   const switchAuthenticationMethodFactory = () => {
     return (
       <div className="mb-3">
-        Algready registered? <Link to="/login">Sign in</Link>
+        Already registered? <Link to="/login">Sign in</Link>
       </div>
     );
   };

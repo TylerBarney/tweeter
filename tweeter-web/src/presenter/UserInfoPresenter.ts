@@ -10,6 +10,7 @@ export interface UserInfoView extends MessageView {
   setDisplayedUser: (user: User) => void;
 }
 
+//uses MessagePresenter to remove duplicate code between displaying info messages
 export class UserInfoPresenter extends MessagePresenter<UserInfoView> {
   private service: FollowService = new FollowService();
 
@@ -33,6 +34,7 @@ export class UserInfoPresenter extends MessagePresenter<UserInfoView> {
     }, "determine follower status");
   }
 
+  //removes duplicate code between counts
   private async doCountOperation(
     getCount: () => Promise<number>,
     setCount: (count: number) => void,
@@ -84,6 +86,7 @@ export class UserInfoPresenter extends MessagePresenter<UserInfoView> {
     );
   }
 
+  //removes duplicate code between follow and unfollow
   private async doFollowOperation(
     user: User,
     isFollower: boolean,

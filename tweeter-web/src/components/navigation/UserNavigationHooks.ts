@@ -5,7 +5,7 @@ import {
   UserNavigationHooksPresenter,
   UserNavigationHooksView,
 } from "../../presenter/UserNavigationHooksPresenter";
-import { useRef } from "react";
+import usePresenter from "../hooks/usePresenter";
 
 export const useUserNavigation = (featurePath: string) => {
   const { displayErrorMessage } = useMessageActions();
@@ -19,14 +19,14 @@ export const useUserNavigation = (featurePath: string) => {
     navigate: navigate,
   };
 
-  const presenter = useRef<UserNavigationHooksPresenter | null>(null);
-  if (!presenter.current) {
-    presenter.current = new UserNavigationHooksPresenter(view);
-  }
+  const presenter = usePresenter(
+    () => view,
+    (view) => new UserNavigationHooksPresenter(view),
+  );
 
   const navigateToUser = async (event: React.MouseEvent): Promise<void> => {
     event.preventDefault();
-    presenter.current!.navigateToUser(
+    presenter.navigateToUser(
       event.target.toString(),
       authToken!,
       displayedUser!,
