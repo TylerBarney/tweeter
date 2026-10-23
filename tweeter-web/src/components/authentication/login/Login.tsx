@@ -13,6 +13,7 @@ import usePresenter from "../../hooks/usePresenter";
 
 interface Props {
   originalUrl?: string;
+  presenter?: LoginPresenter;
 }
 
 const Login = (props: Props) => {
@@ -34,7 +35,7 @@ const Login = (props: Props) => {
 
   const presenter = usePresenter(
     () => view,
-    (view) => new LoginPresenter(view),
+    (view) => props.presenter ?? new LoginPresenter(view),
   );
 
   const checkSubmitButtonStatus = (): boolean => {

@@ -9,7 +9,10 @@ import {
 import useAsyncHook from "../hooks/asyncHooks";
 import usePresenter from "../hooks/usePresenter";
 
-const PostStatus = () => {
+interface Props {
+  presenter?: PostStatusPresenter;
+}
+const PostStatus = (props: Props) => {
   const { displayInfoMessage, displayErrorMessage, deleteMessage } =
     useMessageActions();
 
@@ -26,7 +29,7 @@ const PostStatus = () => {
 
   const presenter = usePresenter(
     () => view,
-    (view) => new PostStatusPresenter(view),
+    (view) => props.presenter ?? new PostStatusPresenter(view),
   );
 
   const submitPost = async (event: React.MouseEvent) => {
@@ -51,6 +54,7 @@ const PostStatus = () => {
         <textarea
           className="form-control"
           id="postStatusTextArea"
+          aria-label="post field"
           rows={10}
           placeholder="What's on your mind?"
           value={post}
@@ -63,6 +67,7 @@ const PostStatus = () => {
         <button
           id="postStatusButton"
           className="btn btn-md btn-primary me-1"
+          aria-label="post status"
           type="button"
           disabled={checkButtonStatus()}
           style={{ width: "8em" }}
@@ -82,6 +87,7 @@ const PostStatus = () => {
           id="clearStatusButton"
           className="btn btn-md btn-secondary"
           type="button"
+          aria-label="clear"
           disabled={checkButtonStatus()}
           onClick={clearPost}
         >
