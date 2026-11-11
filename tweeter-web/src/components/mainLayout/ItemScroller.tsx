@@ -62,7 +62,7 @@ const ItemScroller = <T, S extends Service>(props: Props<T, S>) => {
   };
 
   const loadMoreItems = async () => {
-    presenter.loadMoreItems(authToken!, displayedUser!.alias);
+    await presenter.loadMoreItems(authToken!, displayedUser!.alias);
   };
 
   return (
