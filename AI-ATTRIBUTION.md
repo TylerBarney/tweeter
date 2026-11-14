@@ -21,3 +21,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Document the deployed Lambda and API Gateway setup, and how future agents should add functions and routes, in AGENTS.md and the reference docs.
 - Review: Everything looked good here.
+
+## 2026-11-13: terraform/api.tf, terraform/documentation.tf (new file), reference/lambda-api.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Put API Gateway documentation parts and the published documentation version into documentation.tf
+- Review: I questioned whether or not the right move was to move it to documentation.tf but after further research it was clear that we could not create the description in the same resource. So I had to put it in a documentation.tf file.

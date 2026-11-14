@@ -181,7 +181,8 @@ resource "aws_api_gateway_deployment" "dev" {
 }
 
 resource "aws_api_gateway_stage" "dev" {
-  deployment_id = aws_api_gateway_deployment.dev.id
-  rest_api_id   = aws_api_gateway_rest_api.tweeter.id
-  stage_name    = "dev"
+  deployment_id         = aws_api_gateway_deployment.dev.id
+  rest_api_id           = aws_api_gateway_rest_api.tweeter.id
+  stage_name            = "dev"
+  documentation_version = aws_api_gateway_documentation_version.published.version
 }
