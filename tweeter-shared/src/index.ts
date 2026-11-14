@@ -16,16 +16,20 @@ export { FakeData } from "./util/FakeData";
 // DTOs
 //
 export type { UserDto } from "./model/dto/UserDto";
-
+export type { StatusDto } from "./model/dto/StatusDto";
+export type { PostSegmentDto } from "./model/dto/PostSegmentDto";
 //
 // Requests
 //
 export type { PagedUserItemRequest } from "./model/net/request/PagedUserItemRequest";
-
+export type { PagedUserStatusItemRequest } from "./model/net/request/PagedStatusItemRequest";
+export type { PagedItemRequest } from "./model/net/request/PagedItemRequest";
 //
 // Responses
 //
 export type { PagedUserItemResponse } from "./model/net/response/PagedUserItemResponse";
+export type { PagedStatusItemResponse } from "./model/net/response/PagedStatusItemResponse";
+export type { PagedItemResponse } from "./model/net/response/PagedItemResponse";
 //
 // Others
 //
