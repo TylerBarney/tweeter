@@ -22,3 +22,8 @@ output "status_post_url" {
   description = "POST /status/post on the dev stage"
   value       = "${aws_api_gateway_stage.dev.invoke_url}/status/post"
 }
+
+output "followee_count_url" {
+  description = "POST /followee/count on the dev stage"
+  value       = "${aws_api_gateway_stage.dev.invoke_url}/followee/count"
+}

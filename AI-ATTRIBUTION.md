@@ -63,3 +63,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Add PostStatusLambda and POST /status/post, move userAlias off TweeterRequest onto paged requests, and change postStatus to take a StatusDto.
 - Review: Struggled to test it correctly and needed aditional guidance
+
+## 2026-11-14: tweeter-shared/src/model/net/request/FollowCountRequest.ts (new file), tweeter-shared/src/model/net/response/FollowCountResponse.ts (new file), tweeter-shared/src/index.ts, tweeter-server/src/lambda/follow/GetFolloweeCountLambda.ts (new file), tweeter-server/src/model/service/FollowService.ts, terraform/lambda.tf, terraform/api.tf, terraform/outputs.tf, tweeter-server/function.zip, tweeter-server/layer.zip, reference/lambda-api.md, reference/architecture.md, AGENTS.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add GetFolloweeCountLambda and POST /followee/count, and change getFolloweeCount to take a token and a UserDto.
+- Review: Had to correct some follow count duplication but otherwise worked well.

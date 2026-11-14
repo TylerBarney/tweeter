@@ -1,3 +1,4 @@
+// AI-assisted: see AI-ATTRIBUTION.md
 import { AuthToken, User, FakeData, UserDto } from "tweeter-shared";
 import { Service } from "./Service";
 
@@ -45,11 +46,7 @@ export class FollowService implements Service {
 
     // TODO: Call the server
 
-    const followerCount = await this.getFollowerCount(authToken, userToFollow);
-
-    const followeeCount = await this.getFolloweeCount(authToken, userToFollow);
-
-    return [followerCount, followeeCount];
+    return this.countsFor(authToken, userToFollow);
   }
 
   public async unfollow(
@@ -61,21 +58,24 @@ export class FollowService implements Service {
 
     // TODO: Call the server
 
-    const followerCount = await this.getFollowerCount(
-      authToken,
-      userToUnfollow,
-    );
+    return this.countsFor(authToken, userToUnfollow);
+  }
 
+  private async countsFor(
+    authToken: AuthToken,
+    user: User,
+  ): Promise<[followerCount: number, followeeCount: number]> {
+    const followerCount = await this.getFollowerCount(authToken, user);
     const followeeCount = await this.getFolloweeCount(
-      authToken,
-      userToUnfollow,
+      authToken.token,
+      user.dto,
     );
     return [followerCount, followeeCount];
   }
 
   public async getFolloweeCount(
-    authToken: AuthToken,
-    user: User,
+    token: string,
+    user: UserDto,
   ): Promise<number> {
     // TODO: Replace with the result of calling server
     return FakeData.instance.getFolloweeCount(user.alias);

@@ -26,6 +26,10 @@ locals {
       function_name = "PostStatus"
       handler       = "lambda/status/PostStatusLambda.handler"
     }
+    get_followee_count = {
+      function_name = "GetFolloweeCount"
+      handler       = "lambda/follow/GetFolloweeCountLambda.handler"
+    }
   }
 }
 
