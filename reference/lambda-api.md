@@ -32,25 +32,25 @@ The 200 integration response has no selection pattern. It is the default. Do not
 
 Authorization on the method is `NONE`. When a call needs a token, the token is a field in the JSON body.
 
-## Current route
+## Current routes
 
-POST `/followee/list` invokes function `GetFollowees`, handler `lambda/follow/GetFolloweesLambda.handler`.
+POST `/followee/list` invokes function `GetFollowees`, handler `lambda/follow/GetFolloweesLambda.handler`. It calls `FollowService.loadMoreFollowees`. Terraform output `followee_list_url` is the deployed URL.
 
-The event is a `PagedUserItemRequest`: `token`, `userAlias`, `pageSize` (a JSON number), and `lastItem` (`UserDto` or null). The return value is a `PagedUserItemResponse`: `success`, `message`, `hasMore`, and `items`. The handler calls `FollowService.loadMoreFollowees`, which still uses `FakeData`. Terraform output `followee_list_url` is the deployed URL.
+POST `/follower/list` invokes function `GetFollowers`, handler `lambda/follow/GetFollowersLambda.handler`. It calls `FollowService.loadMoreFollowers`. Terraform output `follower_list_url` is the deployed URL.
 
-Path resources are `followee` under the API root and child `list`. A later route under `/followee/...` reuses `aws_api_gateway_resource.followee` and adds a sibling of `list`.
+Both events are a `PagedUserItemRequest`: `token`, `userAlias`, `pageSize` (a JSON number), and `lastItem` (`UserDto` or null). Both return a `PagedUserItemResponse`: `success`, `message`, `hasMore`, and `items`. Both services still use `FakeData`.
+
+Handlers live in `local.lambda_handlers` in `terraform/lambda.tf`. Routes live in `local.routes` in `terraform/api.tf`. A route key is the path without a leading slash, such as `follower/list`. The first segment is the parent resource, so another route under `/followee/...` reuses that parent and adds a sibling of `list`. POST, OPTIONS, CORS, the 400 and 500 selection patterns, the invoke permission, the deployment trigger, and `local.method_docs` are all generated from those maps.
 
 ## Adding another function and route
 
 1. Add `tweeter-server/src/lambda/<area>/<Name>Lambda.ts`. Export `handler`. The argument is the shared request type, not an API Gateway proxy event. Return the shared response type. Call the server service. Throw a message starting with `[Bad Request]` or `[Server Error]` only when that status is required.
 2. Export any new shared request or response type from `tweeter-shared/src/index.ts` by name.
 3. From `tweeter-server`, run `npm run package:lambda`. That rebuilds both zips. Do not zip inside Terraform.
-4. In `terraform/lambda.tf`, add one `aws_lambda_function` with the same `filename`, `source_code_hash`, `runtime` (`nodejs24.x`), `role`, and `layers` as `get_followees`. `function_name` is the handler name, such as `GetFollowers`. `handler` is the path under `dist` without `.js`, plus `.handler`, such as `lambda/follow/GetFollowersLambda.handler`. Depend on the existing policy attachments, and keep the zip-file precondition.
-5. In `terraform/api.tf`, add only the path resources that do not exist yet. Then add the same POST shape as `/followee/list`: authorization `NONE`, integration type `AWS`, integration method `POST`, `uri` set to that function's `invoke_arn`, the `application/json` template `$input.json('$')`, method responses for 200, 400, and 500, integration responses with the same selection patterns and `'*'` origin header, and an OPTIONS mock on that resource. Reuse `local.post_status_codes`, `local.error_selection_patterns`, and the CORS locals. Add both the POST and OPTIONS methods to `local.method_docs` in `terraform/documentation.tf`. That creates the Documentation tab entries and publishes a new documentation version because the version id is a hash of those descriptions. The `dev` stage already points at `aws_api_gateway_documentation_version.published`.
-6. Let API Gateway invoke that method only. `source_arn` is `"${aws_api_gateway_rest_api.tweeter.execution_arn}/*/POST/<path>"`.
-7. Add the new integration, responses, and permission to `aws_api_gateway_deployment.dev` `depends_on`, and include them in `triggers.redeployment`. Otherwise the `dev` stage keeps serving the previous API.
-8. Add an output in `terraform/outputs.tf`: `"${aws_api_gateway_stage.dev.invoke_url}/<path>"`.
-9. Once a second route exists, replace copied method blocks with one map of routes and `for_each`. Do not keep cloning the GetFollowees resources.
+4. Add one entry to `local.lambda_handlers`. `function_name` is the handler name, such as `GetFollowers`. `handler` is the path under `dist` without `.js`, plus `.handler`, such as `lambda/follow/GetFollowersLambda.handler`. Every function already shares the zip, hash, `nodejs24.x` runtime, role, layer, policy-attachment dependency, and zip-file precondition.
+5. Add one entry to `local.routes`. The key is the path, such as `follower/list`. `function_key` matches the lambda map. `description` is the POST method documentation. That entry creates the path resources, the POST integration (`AWS`, not `AWS_PROXY`, template `$input.json('$')`, authorization `NONE`), the 200, 400, and 500 responses, the OPTIONS mock, the invoke permission for `/*/POST/<path>` only, and both Documentation tab entries. The documentation version id is a hash of those descriptions, and the `dev` stage already points at `aws_api_gateway_documentation_version.published`.
+6. The deployment already depends on the route resources and hashes `local.routes`. A new map entry redeploys the `dev` stage. Do not add a copied method block.
+7. Add an output in `terraform/outputs.tf`: `"${aws_api_gateway_stage.dev.invoke_url}/<path>"`.
 
 Do not add the other operations, S3, DynamoDB, or SQS unless the task asks for them. Do not change a handler's request or response types to fit API Gateway.
 

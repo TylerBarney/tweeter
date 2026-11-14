@@ -1,16 +1,18 @@
 locals {
-  method_docs = {
-    "POST /followee/list" = {
-      method      = "POST"
-      path        = "/followee/list"
-      description = "Returns one page of users the given user follows. The JSON body is a PagedUserItemRequest. The response is a PagedUserItemResponse."
+  method_docs = merge([
+    for path, route in local.routes : {
+      "POST /${path}" = {
+        method      = "POST"
+        path        = "/${path}"
+        description = route.description
+      }
+      "OPTIONS /${path}" = {
+        method      = "OPTIONS"
+        path        = "/${path}"
+        description = "CORS preflight for POST /${path}."
+      }
     }
-    "OPTIONS /followee/list" = {
-      method      = "OPTIONS"
-      path        = "/followee/list"
-      description = "CORS preflight for POST /followee/list."
-    }
-  }
+  ]...)
 }
 
 resource "aws_api_gateway_documentation_part" "method" {

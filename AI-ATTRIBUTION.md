@@ -27,3 +27,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Put API Gateway documentation parts and the published documentation version into documentation.tf
 - Review: I questioned whether or not the right move was to move it to documentation.tf but after further research it was clear that we could not create the description in the same resource. So I had to put it in a documentation.tf file.
+
+## 2026-11-13: tweeter-server/src/lambda/follow/GetFollowersLambda.ts (new file), terraform/lambda.tf, terraform/api.tf, terraform/documentation.tf, terraform/outputs.tf, reference/lambda-api.md, reference/architecture.md, AGENTS.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add GetFollowersLambda, deploy it as POST /follower/list through the shared API Gateway route map, and apply Terraform.
+- Review: I had to correct some of the terraform for api gateway because it was only for a single endpoint and was not versatile for multiple endpoints. This created a lot of code duplication in terraform. Also the AI Attribution was in the wrong place in the log for some reason.

@@ -2,7 +2,7 @@
 
 ## Current client
 
-The client still reads dummy data. One server route is deployed; the facade, DAOs, and the other operations are not built yet. Today the client looks like this:
+The client still reads dummy data. Two server routes are deployed; the facade, DAOs, and the other operations are not built yet. Today the client looks like this:
 
 ```
 view (React components and hooks)
@@ -48,7 +48,7 @@ Async service calls return to the presenter with async/await. The presenter neve
 
 ## Deployed API
 
-POST `/followee/list` is the one live route. API Gateway sends the JSON body to the `GetFollowees` Lambda as the event. The handler calls `FollowService.loadMoreFollowees`, which still returns `FakeData`. The integration is `AWS`, not `AWS_PROXY`, so the handler takes a request DTO and returns a response DTO. HTTP 200 is that return value. HTTP 400 and 500 happen only when the Lambda throws `[Bad Request]` or `[Server Error]`.
+POST `/followee/list` and POST `/follower/list` are the live routes. API Gateway sends each JSON body to the `GetFollowees` or `GetFollowers` Lambda as the event. Those handlers call `FollowService.loadMoreFollowees` and `FollowService.loadMoreFollowers`, which still return `FakeData`. The integration is `AWS`, not `AWS_PROXY`, so each handler takes a request DTO and returns a response DTO. HTTP 200 is that return value. HTTP 400 and 500 happen only when the Lambda throws `[Bad Request]` or `[Server Error]`.
 
 Region, shared role, layer, zip layout, CORS, and the steps for the next route are in [lambda-api.md](lambda-api.md).
 

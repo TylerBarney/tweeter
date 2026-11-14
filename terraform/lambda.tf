@@ -5,6 +5,16 @@ locals {
     "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
     "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess",
   ])
+  lambda_handlers = {
+    get_followees = {
+      function_name = "GetFollowees"
+      handler       = "lambda/follow/GetFolloweesLambda.handler"
+    }
+    get_followers = {
+      function_name = "GetFollowers"
+      handler       = "lambda/follow/GetFollowersLambda.handler"
+    }
+  }
 }
 
 resource "aws_iam_role" "lambda" {
@@ -38,6 +48,8 @@ resource "aws_lambda_layer_version" "dependencies" {
   source_code_hash    = filebase64sha256(local.layer_zip)
 
   lifecycle {
+    create_before_destroy = true
+
     precondition {
       condition     = fileexists(local.layer_zip)
       error_message = "Missing tweeter-server/layer.zip. Run npm run package:lambda in tweeter-server."
@@ -45,11 +57,13 @@ resource "aws_lambda_layer_version" "dependencies" {
   }
 }
 
-resource "aws_lambda_function" "get_followees" {
-  function_name    = "GetFollowees"
+resource "aws_lambda_function" "handler" {
+  for_each = local.lambda_handlers
+
+  function_name    = each.value.function_name
   filename         = local.function_zip
   source_code_hash = filebase64sha256(local.function_zip)
-  handler          = "lambda/follow/GetFolloweesLambda.handler"
+  handler          = each.value.handler
   runtime          = "nodejs24.x"
   role             = aws_iam_role.lambda.arn
   layers           = [aws_lambda_layer_version.dependencies.arn]

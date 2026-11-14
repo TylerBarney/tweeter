@@ -7,7 +7,7 @@ Tweeter is a simplified social app (BYU CS 340): users, short public statuses, s
 - `tweeter-server` — Lambda handlers in `src/lambda` and server services in `src/model/service`.
 - `terraform/` — the deployed API Gateway and Lambda stack.
 
-The UI is functional and uses dummy data inside the client service classes. One server route is deployed, POST `/followee/list`, and its handler still returns `FakeData`. The target is for those services to call the server described in [reference/architecture.md](reference/architecture.md).
+The UI is functional and uses dummy data inside the client service classes. Two server routes are deployed, POST `/followee/list` and POST `/follower/list`, and their handlers still return `FakeData`. The target is for those services to call the server described in [reference/architecture.md](reference/architecture.md).
 
 ## Where to read more
 
