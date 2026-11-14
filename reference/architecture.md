@@ -2,7 +2,7 @@
 
 ## Current client
 
-The server and network layer below are not in the repo yet. Today the client looks like this:
+The client still reads dummy data. One server route is deployed; the facade, DAOs, and the other operations are not built yet. Today the client looks like this:
 
 ```
 view (React components and hooks)
@@ -46,9 +46,15 @@ Async service calls return to the presenter with async/await. The presenter neve
 - `tweeter-web/test/components/authentication/login/Login.test.tsx` — sign-in button enablement and that the presenter is called with the typed alias and password.
 - `tweeter-web/test/components/postStatus/PostStatus.test.tsx` — Post and Clear button enablement, with `useUserInfo` mocked.
 
+## Deployed API
+
+POST `/followee/list` is the one live route. API Gateway sends the JSON body to the `GetFollowees` Lambda as the event. The handler calls `FollowService.loadMoreFollowees`, which still returns `FakeData`. The integration is `AWS`, not `AWS_PROXY`, so the handler takes a request DTO and returns a response DTO. HTTP 200 is that return value. HTTP 400 and 500 happen only when the Lambda throws `[Bad Request]` or `[Server Error]`.
+
+Region, shared role, layer, zip layout, CORS, and the steps for the next route are in [lambda-api.md](lambda-api.md).
+
 ## Target
 
-Same views and presenters. Client services stop reading `FakeData` and call the server. Request and response types live in `tweeter-shared`.
+Same views and presenters. Client services stop reading `FakeData` and call the server. Request and response types live in `tweeter-shared`. New operations follow the deployed `GetFollowees` route.
 
 ```
 view → presenter → client service
@@ -62,5 +68,5 @@ view → presenter → client service
 - Server services go through DAOs. Users, sessions, follows, and statuses are stored in DynamoDB. Passwords are hashed. Profile images are stored on S3. Tokens expire after inactivity. Unauthorized calls fail at the API.
 - Posting a status updates the author's story and the feeds of current followers off the request path, so a large follower count does not make the post call fall over. A feed includes a status only when the viewer followed the author at post time. Older feed entries stay after an unfollow.
 - Until the DAOs exist, the server services can keep returning the same dummy data through the API. The client still must not touch `FakeData`.
-- Prefer scripted or template-based setup for Lambdas and routes.
+- Add Lambdas and routes in `terraform/`, reusing the role, layer, function zip, API, and `dev` stage. See [lambda-api.md](lambda-api.md).
 - Integration tests call the facade directly for register, a followers page, and a follow count, and call `StatusService` for a successful story page. Assert the returned data, not only that a call completed.
