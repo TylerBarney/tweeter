@@ -39,3 +39,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Factor the shared paged-request handling out of GetFollowersLambda, GetFolloweesLambda, and GetStoriesLambda into one generic handler.
 - Review: There were unused generics that had to be removed
+
+## 2026-11-14: terraform/lambda.tf, terraform/api.tf, terraform/outputs.tf, tweeter-server/function.zip, tweeter-server/layer.zip, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Package GetStoriesLambda into the shared function zip, then add and deploy the GetStories Lambda and POST /stories/list on the existing API Gateway.
+- Review: Everything looks perfect. Just needed to have it check more cases to ensure the lambda and gateway worked correctly

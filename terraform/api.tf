@@ -17,6 +17,10 @@ locals {
       function_key = "get_followers"
       description  = "Returns one page of users who follow the given user. The JSON body is a PagedUserItemRequest. The response is a PagedUserItemResponse."
     }
+    "stories/list" = {
+      function_key = "get_stories"
+      description  = "Returns one page of statuses in the given user's story. The JSON body is a PagedUserStatusItemRequest. The response is a PagedStatusItemResponse."
+    }
   }
 
   route_parents = toset([for path in keys(local.routes) : split("/", path)[0]])

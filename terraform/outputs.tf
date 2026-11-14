@@ -7,3 +7,8 @@ output "follower_list_url" {
   description = "POST /follower/list on the dev stage"
   value       = "${aws_api_gateway_stage.dev.invoke_url}/follower/list"
 }
+
+output "stories_list_url" {
+  description = "POST /stories/list on the dev stage"
+  value       = "${aws_api_gateway_stage.dev.invoke_url}/stories/list"
+}
