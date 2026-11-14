@@ -12,3 +12,8 @@ output "stories_list_url" {
   description = "POST /stories/list on the dev stage"
   value       = "${aws_api_gateway_stage.dev.invoke_url}/stories/list"
 }
+
+output "feed_list_url" {
+  description = "POST /feed/list on the dev stage"
+  value       = "${aws_api_gateway_stage.dev.invoke_url}/feed/list"
+}

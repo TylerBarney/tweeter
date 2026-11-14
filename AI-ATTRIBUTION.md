@@ -51,3 +51,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Add GetFeedLambda and change loadMoreFeedItems to return StatusDto pages through the existing getFakeData helper.
 - Review: Did it perfectly
+
+## 2026-11-14: terraform/lambda.tf, terraform/api.tf, terraform/outputs.tf, tweeter-server/function.zip, tweeter-server/layer.zip, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Package GetFeedLambda into the shared function zip, then add and deploy the GetFeed Lambda and POST /feed/list on the existing API Gateway.
+- Review: Did it perfectly

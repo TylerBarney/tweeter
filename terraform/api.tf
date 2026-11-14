@@ -21,6 +21,10 @@ locals {
       function_key = "get_stories"
       description  = "Returns one page of statuses in the given user's story. The JSON body is a PagedUserStatusItemRequest. The response is a PagedStatusItemResponse."
     }
+    "feed/list" = {
+      function_key = "get_feed"
+      description  = "Returns one page of statuses in the given user's feed. The JSON body is a PagedUserStatusItemRequest. The response is a PagedStatusItemResponse."
+    }
   }
 
   route_parents = toset([for path in keys(local.routes) : split("/", path)[0]])

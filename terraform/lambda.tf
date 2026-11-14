@@ -18,6 +18,10 @@ locals {
       function_name = "GetStories"
       handler       = "lambda/status/GetStoriesLambda.handler"
     }
+    get_feed = {
+      function_name = "GetFeed"
+      handler       = "lambda/status/GetFeedLambda.handler"
+    }
   }
 }
 
