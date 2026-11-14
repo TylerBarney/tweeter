@@ -57,3 +57,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Package GetFeedLambda into the shared function zip, then add and deploy the GetFeed Lambda and POST /feed/list on the existing API Gateway.
 - Review: Did it perfectly
+
+## 2026-11-14: tweeter-shared/src/model/net/request/TweeterRequest.ts, tweeter-shared/src/model/net/request/PagedItemRequest.ts, tweeter-shared/src/model/net/request/PostStatusRequest.ts (new file), tweeter-shared/src/index.ts, tweeter-server/src/model/service/StatusService.ts, tweeter-server/src/lambda/status/PostStatusLambda.ts (new file), terraform/lambda.tf, terraform/api.tf, terraform/outputs.tf, tweeter-server/function.zip, tweeter-server/layer.zip, reference/lambda-api.md, reference/architecture.md, AGENTS.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add PostStatusLambda and POST /status/post, move userAlias off TweeterRequest onto paged requests, and change postStatus to take a StatusDto.
+- Review: Struggled to test it correctly and needed aditional guidance

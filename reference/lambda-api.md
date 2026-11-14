@@ -38,7 +38,17 @@ POST `/followee/list` invokes function `GetFollowees`, handler `lambda/follow/Ge
 
 POST `/follower/list` invokes function `GetFollowers`, handler `lambda/follow/GetFollowersLambda.handler`. It calls `FollowService.loadMoreFollowers`. Terraform output `follower_list_url` is the deployed URL.
 
-Both events are a `PagedUserItemRequest`: `token`, `userAlias`, `pageSize` (a JSON number), and `lastItem` (`UserDto` or null). Both return a `PagedUserItemResponse`: `success`, `message`, `hasMore`, and `items`. Both services still use `FakeData`.
+Both follow events are a `PagedUserItemRequest`: `token`, `userAlias`, `pageSize` (a JSON number), and `lastItem` (`UserDto` or null). Both return a `PagedUserItemResponse`: `success`, `message`, `hasMore`, and `items`. Both services still use `FakeData`.
+
+POST `/stories/list` invokes function `GetStories`, handler `lambda/status/GetStoriesLambda.handler`. It calls `StatusService.loadMoreStoryItems`. Terraform output `stories_list_url` is the deployed URL.
+
+POST `/feed/list` invokes function `GetFeed`, handler `lambda/status/GetFeedLambda.handler`. It calls `StatusService.loadMoreFeedItems`. Terraform output `feed_list_url` is the deployed URL.
+
+Both status-page events are a `PagedUserStatusItemRequest`: `token`, `userAlias`, `pageSize`, and `lastItem` (`StatusDto` or null). Both return a `PagedStatusItemResponse`. Both services still use `FakeData`.
+
+POST `/status/post` invokes function `PostStatus`, handler `lambda/status/PostStatusLambda.handler`. It calls `StatusService.postStatus`. Terraform output `status_post_url` is the deployed URL. The event is a `PostStatusRequest`: `token` and `newStatus` (`StatusDto`). The return value is a `TweeterResponse`: `success` and `message`. `postStatus` still only pauses and does not store the status.
+
+`TweeterRequest` is `token` only. A request that pages by user adds `userAlias` on `PagedItemRequest`. `PostStatusRequest` does not have `userAlias`.
 
 Handlers live in `local.lambda_handlers` in `terraform/lambda.tf`. Routes live in `local.routes` in `terraform/api.tf`. A route key is the path without a leading slash, such as `follower/list`. The first segment is the parent resource, so another route under `/followee/...` reuses that parent and adds a sibling of `list`. POST, OPTIONS, CORS, the 400 and 500 selection patterns, the invoke permission, the deployment trigger, and `local.method_docs` are all generated from those maps.
 

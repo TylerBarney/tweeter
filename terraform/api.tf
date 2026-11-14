@@ -25,6 +25,10 @@ locals {
       function_key = "get_feed"
       description  = "Returns one page of statuses in the given user's feed. The JSON body is a PagedUserStatusItemRequest. The response is a PagedStatusItemResponse."
     }
+    "status/post" = {
+      function_key = "post_status"
+      description  = "Posts a status for the authenticated user. The JSON body is a PostStatusRequest. The response is a TweeterResponse."
+    }
   }
 
   route_parents = toset([for path in keys(local.routes) : split("/", path)[0]])

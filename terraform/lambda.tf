@@ -22,6 +22,10 @@ locals {
       function_name = "GetFeed"
       handler       = "lambda/status/GetFeedLambda.handler"
     }
+    post_status = {
+      function_name = "PostStatus"
+      handler       = "lambda/status/PostStatusLambda.handler"
+    }
   }
 }
 

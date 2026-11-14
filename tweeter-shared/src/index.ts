@@ -1,3 +1,4 @@
+// AI-assisted: see AI-ATTRIBUTION.md
 // All classes that should be avaialble to other modules need to exported here. export * does not work when
 // uploading to lambda. Instead we have to list each export.
 
@@ -24,12 +25,14 @@ export type { PostSegmentDto } from "./model/dto/PostSegmentDto";
 export type { PagedUserItemRequest } from "./model/net/request/PagedUserItemRequest";
 export type { PagedUserStatusItemRequest } from "./model/net/request/PagedStatusItemRequest";
 export type { PagedItemRequest } from "./model/net/request/PagedItemRequest";
+export type { PostStatusRequest } from "./model/net/request/PostStatusRequest";
 //
 // Responses
 //
 export type { PagedUserItemResponse } from "./model/net/response/PagedUserItemResponse";
 export type { PagedStatusItemResponse } from "./model/net/response/PagedStatusItemResponse";
 export type { PagedItemResponse } from "./model/net/response/PagedItemResponse";
+export type { TweeterResponse } from "./model/net/response/TweeterResponse";
 //
 // Others
 //
