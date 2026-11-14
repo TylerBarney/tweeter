@@ -21,17 +21,30 @@ Extend the existing presenter bases (`Presenter`, `MessagePresenter`, `Authentic
 
 From `tweeter-web`: `npm start` runs the app, `npm run build` typechecks and builds, `npm test` runs Jest. After changing `tweeter-shared`, build that module, then build `tweeter-web`. Tests live in `tweeter-web/test`. Presenter tests use ts-mockito. Component tests use React Testing Library. Mock `useUserInfo` with Jest when a component under test needs a current user and auth token.
 
+## Avoid Code Duplication at all costs
+
+User the following patterns when writing or reviewing code in order to remove and reduce code duplication:
+
+- Generics
+- Inheritance
+- Composition
+- Template Method
+- Pass in functions
+
 ## AI attribution
+
 After each task that changes files, append an entry to
 AI-ATTRIBUTION.md in the repository root, creating the file if it does
 not exist. Use this format, with today's date:
+
 ## YYYY-MM-DD: <each file changed, with (new file) after new ones>
+
 - Tool: <tool name>
 - Task: <the task I gave you, in one or two sentences>
 - Review: TODO
-Leave the Review line as TODO. I fill it in after I review the change.
-List every file you changed or created, including tests, and do not
-list anything you did not change.
-If a TypeScript file you created or changed does not already start
-with this line, add it as the first line:
-// AI-assisted: see AI-ATTRIBUTION.md
+  Leave the Review line as TODO. I fill it in after I review the change.
+  List every file you changed or created, including tests, and do not
+  list anything you did not change.
+  If a TypeScript file you created or changed does not already start
+  with this line, add it as the first line:
+  // AI-assisted: see AI-ATTRIBUTION.md
