@@ -1,18 +1,7 @@
 // AI-assisted: see AI-ATTRIBUTION.md
-import { LoginRequest, LoginResponse } from "tweeter-shared";
 import { UserService } from "../../model/service/UserService";
+import { createAuthenticationHandler } from "./AuthenticationHandler";
 
-export const handler = async (
-  request: LoginRequest,
-): Promise<LoginResponse> => {
-  const [user, authToken] = await new UserService().login(
-    request.alias,
-    request.password,
-  );
-  return {
-    success: true,
-    message: null,
-    user,
-    authToken,
-  };
-};
+export const handler = createAuthenticationHandler((request) =>
+  new UserService().login(request.alias, request.password),
+);

@@ -54,6 +54,10 @@ locals {
       function_name = "Login"
       handler       = "lambda/user/LoginLambda.handler"
     }
+    register = {
+      function_name = "Register"
+      handler       = "lambda/user/RegisterLambda.handler"
+    }
   }
 }
 

@@ -55,7 +55,11 @@ locals {
     }
     "user/login" = {
       function_key = "login"
-      description  = "Signs in with an alias and password. The JSON body is a LoginRequest. The response is a LoginResponse."
+      description  = "Signs in with an alias and password. The JSON body is a LoginRequest. The response is an AuthenticationResponse."
+    }
+    "user/register" = {
+      function_key = "register"
+      description  = "Registers a user and signs them in. The JSON body is a RegisterRequest. The response is an AuthenticationResponse."
     }
   }
 

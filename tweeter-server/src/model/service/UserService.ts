@@ -1,13 +1,6 @@
 // AI-assisted: see AI-ATTRIBUTION.md
-import {
-  AuthToken,
-  AuthTokenDto,
-  User,
-  FakeData,
-  UserDto,
-} from "tweeter-shared";
+import { AuthToken, AuthTokenDto, FakeData, UserDto } from "tweeter-shared";
 import { Service } from "./Service";
-import { Buffer } from "buffer";
 
 export class UserService implements Service {
   public async getUser(
@@ -24,13 +17,7 @@ export class UserService implements Service {
     password: string,
   ): Promise<[UserDto, AuthTokenDto]> {
     // TODO: Replace with the result of calling the server
-    const user = FakeData.instance.firstUser;
-
-    if (user === null) {
-      throw new Error("Invalid alias or password");
-    }
-
-    return [user.dto, FakeData.instance.authToken.dto];
+    return this.firstUserAndToken("Invalid alias or password");
   }
 
   public async register(
@@ -38,21 +25,23 @@ export class UserService implements Service {
     lastName: string,
     alias: string,
     password: string,
-    userImageBytes: Uint8Array,
+    userImageBytes: string,
     imageFileExtension: string,
-  ): Promise<[User, AuthToken]> {
-    // Not neded now, but will be needed when you make the request to the server in milestone 3
-    const imageStringBase64: string =
-      Buffer.from(userImageBytes).toString("base64");
-
+  ): Promise<[UserDto, AuthTokenDto]> {
     // TODO: Replace with the result of calling the server
+    return this.firstUserAndToken("Invalid registration");
+  }
+
+  private firstUserAndToken(
+    failureMessage: string,
+  ): [UserDto, AuthTokenDto] {
     const user = FakeData.instance.firstUser;
 
     if (user === null) {
-      throw new Error("Invalid registration");
+      throw new Error(failureMessage);
     }
 
-    return [user, FakeData.instance.authToken];
+    return [user.dto, FakeData.instance.authToken.dto];
   }
 
   public async logout(authToken: AuthToken): Promise<void> {

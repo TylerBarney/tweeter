@@ -31,6 +31,7 @@ export type { TokenRequest } from "./model/net/request/TokenRequest";
 export type { FollowRequest } from "./model/net/request/FollowRequest";
 export type { UserRequest } from "./model/net/request/UserRequest";
 export type { LoginRequest } from "./model/net/request/LoginRequest";
+export type { RegisterRequest } from "./model/net/request/RegisterRequest";
 export type { FollowerStatusRequest } from "./model/net/request/FollowerStatusRequest";
 //
 // Responses
@@ -43,7 +44,7 @@ export type { FollowCountResponse } from "./model/net/response/FollowCountRespon
 export type { FollowResponse } from "./model/net/response/FollowResponse";
 export type { FollowerStatusResponse } from "./model/net/response/FollowerStatusResponse";
 export type { UserResponse } from "./model/net/response/UserResponse";
-export type { LoginResponse } from "./model/net/response/LoginResponse";
+export type { AuthenticationResponse } from "./model/net/response/AuthenticationResponse";
 //
 // Others
 //

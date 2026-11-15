@@ -57,3 +57,8 @@ output "user_login_url" {
   description = "POST /user/login on the dev stage"
   value       = "${aws_api_gateway_stage.dev.invoke_url}/user/login"
 }
+
+output "user_register_url" {
+  description = "POST /user/register on the dev stage"
+  value       = "${aws_api_gateway_stage.dev.invoke_url}/user/register"
+}
