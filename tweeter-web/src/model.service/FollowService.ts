@@ -1,86 +1,104 @@
-import { AuthToken, User, FakeData } from "tweeter-shared";
+// AI-assisted: see AI-ATTRIBUTION.md
+import {
+  AuthToken,
+  FollowRequest,
+  PagedUserItemRequest,
+  User,
+} from "tweeter-shared";
+import { ServerFacade } from "../network/ServerFacade";
 import { Service } from "./Service";
 
 export class FollowService implements Service {
-  public async loadMoreFollowees(
+  private readonly serverFacade = new ServerFacade();
+
+  public loadMoreFollowees(
     authToken: AuthToken,
     userAlias: string,
     pageSize: number,
     lastItem: User | null,
   ): Promise<[User[], boolean]> {
-    // TODO: Replace with the result of calling server
-    return FakeData.instance.getPageOfUsers(lastItem, pageSize, userAlias);
+    return this.loadMoreUsers(
+      authToken,
+      userAlias,
+      pageSize,
+      lastItem,
+      (request) => this.serverFacade.getMoreFollowees(request),
+    );
   }
 
-  public async loadMoreFollowers(
+  public loadMoreFollowers(
     authToken: AuthToken,
     userAlias: string,
     pageSize: number,
     lastItem: User | null,
   ): Promise<[User[], boolean]> {
-    // TODO: Replace with the result of calling server
-    return FakeData.instance.getPageOfUsers(lastItem, pageSize, userAlias);
+    return this.loadMoreUsers(
+      authToken,
+      userAlias,
+      pageSize,
+      lastItem,
+      (request) => this.serverFacade.getMoreFollowers(request),
+    );
   }
 
-  public async follow(
+  public follow(
     authToken: AuthToken,
     userToFollow: User,
   ): Promise<[followerCount: number, followeeCount: number]> {
-    // Pause so we can see the follow message. Remove when connected to the server
-    await new Promise((f) => setTimeout(f, 2000));
-
-    // TODO: Call the server
-
-    const followerCount = await this.getFollowerCount(authToken, userToFollow);
-
-    const followeeCount = await this.getFolloweeCount(authToken, userToFollow);
-
-    return [followerCount, followeeCount];
+    return this.serverFacade.follow(this.followRequest(authToken, userToFollow));
   }
 
-  public async unfollow(
+  public unfollow(
     authToken: AuthToken,
     userToUnfollow: User,
   ): Promise<[followerCount: number, followeeCount: number]> {
-    // Pause so we can see the unfollow message. Remove when connected to the server
-    await new Promise((f) => setTimeout(f, 2000));
-
-    // TODO: Call the server
-
-    const followerCount = await this.getFollowerCount(
-      authToken,
-      userToUnfollow,
+    return this.serverFacade.unfollow(
+      this.followRequest(authToken, userToUnfollow),
     );
+  }
 
-    const followeeCount = await this.getFolloweeCount(
-      authToken,
-      userToUnfollow,
+  public getFolloweeCount(authToken: AuthToken, user: User): Promise<number> {
+    return this.serverFacade.getFolloweeCount(
+      this.followRequest(authToken, user),
     );
-    return [followerCount, followeeCount];
   }
 
-  public async getFolloweeCount(
-    authToken: AuthToken,
-    user: User,
-  ): Promise<number> {
-    // TODO: Replace with the result of calling server
-    return FakeData.instance.getFolloweeCount(user.alias);
+  public getFollowerCount(authToken: AuthToken, user: User): Promise<number> {
+    return this.serverFacade.getFollowerCount(
+      this.followRequest(authToken, user),
+    );
   }
 
-  public async getFollowerCount(
-    authToken: AuthToken,
-    user: User,
-  ): Promise<number> {
-    // TODO: Replace with the result of calling server
-    return FakeData.instance.getFollowerCount(user.alias);
-  }
-
-  public async getIsFollowerStatus(
+  public getIsFollowerStatus(
     authToken: AuthToken,
     user: User,
     selectedUser: User,
   ): Promise<boolean> {
-    // TODO: Replace with the result of calling server
-    return FakeData.instance.isFollower();
+    return this.serverFacade.getIsFollowerStatus({
+      ...this.followRequest(authToken, user),
+      selectedUser: selectedUser.dto,
+    });
+  }
+
+  private loadMoreUsers(
+    authToken: AuthToken,
+    userAlias: string,
+    pageSize: number,
+    lastItem: User | null,
+    loadPage: (request: PagedUserItemRequest) => Promise<[User[], boolean]>,
+  ): Promise<[User[], boolean]> {
+    return loadPage({
+      token: authToken.token,
+      userAlias,
+      pageSize,
+      lastItem: lastItem === null ? null : lastItem.dto,
+    });
+  }
+
+  private followRequest(authToken: AuthToken, user: User): FollowRequest {
+    return {
+      token: authToken.token,
+      user: user.dto,
+    };
   }
 }

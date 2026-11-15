@@ -117,3 +117,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Add LogoutLambda and POST /user/logout. The request is a TokenRequest, logout takes a token string, and the response is a TweeterResponse.
 - Review: Everything looked good
+
+## 2026-11-15: tweeter-web/src/network/ClientCommunicator.ts (new file), tweeter-web/src/network/ServerFacade.ts (new file), tweeter-web/src/model.service/UserService.ts, tweeter-web/src/model.service/FollowService.ts, tweeter-web/src/model.service/StatusService.ts, tweeter-shared/src/index.ts, reference/architecture.md, AGENTS.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add ClientCommunicator and ServerFacade, and change the client services to call all 14 deployed endpoints instead of FakeData.
+- Review: Did a surprisingly great job. Even removed the duplication

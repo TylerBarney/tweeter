@@ -2,13 +2,15 @@
 
 ## Current client
 
-The client still reads dummy data. The deployed routes are POST `/followee/list`, POST `/follower/list`, POST `/followee/count`, POST `/follower/count`, POST `/follower/status`, POST `/follow`, POST `/unfollow`, POST `/user/get`, POST `/user/login`, POST `/user/register`, POST `/user/logout`, POST `/stories/list`, POST `/feed/list`, and POST `/status/post`. The facade, DAOs, and the other operations are not built yet. Today the client looks like this:
+The client calls the deployed API. The lambdas still return `FakeData`. DAOs are not built yet. Today the client looks like this:
 
 ```
 view (React components and hooks)
   → presenter (view interface / observer)
     → service (application logic)
-      → FakeData in tweeter-shared
+      → ServerFacade
+        → ClientCommunicator
+          → API Gateway
 ```
 
 Async service calls return to the presenter with async/await. The presenter never updates the screen itself. It calls methods on its view (show an error, add a page of items, navigate, enable or disable a control).
@@ -31,7 +33,7 @@ Async service calls return to the presenter with async/await. The presenter neve
 
 ## Services
 
-`tweeter-web/src/model.service`. Three classes cover the 14 operations. Each still reads `FakeData` (or, for post, follow, unfollow, and logout, only simulates the call).
+`tweeter-web/src/model.service`. Three classes cover the 14 operations. Each calls `ServerFacade` in `tweeter-web/src/network`. `ClientCommunicator` performs the POST. The services build the shared request objects and return domain objects to presenters.
 
 **UserService:** get user, login, register, logout.
 
