@@ -19,6 +19,7 @@ export { FakeData } from "./util/FakeData";
 export type { UserDto } from "./model/dto/UserDto";
 export type { StatusDto } from "./model/dto/StatusDto";
 export type { PostSegmentDto } from "./model/dto/PostSegmentDto";
+export type { AuthTokenDto } from "./model/dto/AuthTokenDto";
 //
 // Requests
 //
@@ -29,6 +30,7 @@ export type { PostStatusRequest } from "./model/net/request/PostStatusRequest";
 export type { TokenRequest } from "./model/net/request/TokenRequest";
 export type { FollowRequest } from "./model/net/request/FollowRequest";
 export type { UserRequest } from "./model/net/request/UserRequest";
+export type { LoginRequest } from "./model/net/request/LoginRequest";
 export type { FollowerStatusRequest } from "./model/net/request/FollowerStatusRequest";
 //
 // Responses
@@ -41,6 +43,7 @@ export type { FollowCountResponse } from "./model/net/response/FollowCountRespon
 export type { FollowResponse } from "./model/net/response/FollowResponse";
 export type { FollowerStatusResponse } from "./model/net/response/FollowerStatusResponse";
 export type { UserResponse } from "./model/net/response/UserResponse";
+export type { LoginResponse } from "./model/net/response/LoginResponse";
 //
 // Others
 //

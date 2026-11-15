@@ -99,3 +99,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Make TweeterRequest empty, add TokenRequest, and add GetUserLambda and POST /user/get that returns a UserDto or null.
 - Review: Had to guide it through some inhertiance issues. Otherwise all looked good
+
+## 2026-11-15: tweeter-shared/src/model/dto/AuthTokenDto.ts (new file), tweeter-shared/src/model/domain/AuthToken.ts, tweeter-shared/src/model/net/request/LoginRequest.ts (new file), tweeter-shared/src/model/net/response/LoginResponse.ts (new file), tweeter-shared/src/index.ts, tweeter-server/src/lambda/user/LoginLambda.ts (new file), tweeter-server/src/model/service/UserService.ts, terraform/lambda.tf, terraform/api.tf, terraform/outputs.tf, tweeter-server/function.zip, tweeter-server/layer.zip, reference/lambda-api.md, reference/architecture.md, AGENTS.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add LoginLambda and POST /user/login. LoginRequest carries alias and password, login returns a UserDto and AuthTokenDto, and LoginResponse returns both.
+- Review: Added way too much to the LoginLambda for all sorts of authentication checks. Had to remove it and simiplify.

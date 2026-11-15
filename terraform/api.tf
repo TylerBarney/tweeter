@@ -53,6 +53,10 @@ locals {
       function_key = "get_user"
       description  = "Returns the user with the given alias. The JSON body is a UserRequest. The response is a UserResponse."
     }
+    "user/login" = {
+      function_key = "login"
+      description  = "Signs in with an alias and password. The JSON body is a LoginRequest. The response is a LoginResponse."
+    }
   }
 
   route_segments = {

@@ -1,5 +1,11 @@
 // AI-assisted: see AI-ATTRIBUTION.md
-import { AuthToken, User, FakeData, UserDto } from "tweeter-shared";
+import {
+  AuthToken,
+  AuthTokenDto,
+  User,
+  FakeData,
+  UserDto,
+} from "tweeter-shared";
 import { Service } from "./Service";
 import { Buffer } from "buffer";
 
@@ -16,7 +22,7 @@ export class UserService implements Service {
   public async login(
     alias: string,
     password: string,
-  ): Promise<[User, AuthToken]> {
+  ): Promise<[UserDto, AuthTokenDto]> {
     // TODO: Replace with the result of calling the server
     const user = FakeData.instance.firstUser;
 
@@ -24,7 +30,7 @@ export class UserService implements Service {
       throw new Error("Invalid alias or password");
     }
 
-    return [user, FakeData.instance.authToken];
+    return [user.dto, FakeData.instance.authToken.dto];
   }
 
   public async register(

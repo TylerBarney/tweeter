@@ -50,6 +50,10 @@ locals {
       function_name = "GetUser"
       handler       = "lambda/user/GetUserLambda.handler"
     }
+    login = {
+      function_name = "Login"
+      handler       = "lambda/user/LoginLambda.handler"
+    }
   }
 }
 
