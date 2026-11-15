@@ -93,3 +93,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Add GetFollowerStatusLambda and POST /follower/status, and change getIsFollowerStatus to take a token and two UserDtos.
 - Review: Everything looked good
+
+## 2026-11-15: tweeter-shared/src/model/net/request/TweeterRequest.ts, tweeter-shared/src/model/net/request/TokenRequest.ts (new file), tweeter-shared/src/model/net/request/PagedItemRequest.ts, tweeter-shared/src/model/net/request/PostStatusRequest.ts, tweeter-shared/src/model/net/request/FollowRequest.ts, tweeter-shared/src/model/net/request/UserRequest.ts (new file), tweeter-shared/src/model/net/response/UserResponse.ts (new file), tweeter-shared/src/index.ts, tweeter-server/src/lambda/user/GetUserLambda.ts (new file), tweeter-server/src/model/service/UserService.ts, terraform/lambda.tf, terraform/api.tf, terraform/outputs.tf, tweeter-server/function.zip, tweeter-server/layer.zip, reference/lambda-api.md, reference/architecture.md, AGENTS.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Make TweeterRequest empty, add TokenRequest, and add GetUserLambda and POST /user/get that returns a UserDto or null.
+- Review: Had to guide it through some inhertiance issues. Otherwise all looked good

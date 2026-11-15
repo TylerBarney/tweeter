@@ -49,6 +49,10 @@ locals {
       function_key = "get_follower_status"
       description  = "Returns whether the user follows the selected user. The JSON body is a FollowerStatusRequest. The response is a FollowerStatusResponse."
     }
+    "user/get" = {
+      function_key = "get_user"
+      description  = "Returns the user with the given alias. The JSON body is a UserRequest. The response is a UserResponse."
+    }
   }
 
   route_segments = {

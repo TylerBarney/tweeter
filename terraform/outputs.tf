@@ -47,3 +47,8 @@ output "follower_status_url" {
   description = "POST /follower/status on the dev stage"
   value       = "${aws_api_gateway_stage.dev.invoke_url}/follower/status"
 }
+
+output "user_get_url" {
+  description = "POST /user/get on the dev stage"
+  value       = "${aws_api_gateway_stage.dev.invoke_url}/user/get"
+}

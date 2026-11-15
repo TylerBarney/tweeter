@@ -26,7 +26,9 @@ export type { PagedUserItemRequest } from "./model/net/request/PagedUserItemRequ
 export type { PagedUserStatusItemRequest } from "./model/net/request/PagedStatusItemRequest";
 export type { PagedItemRequest } from "./model/net/request/PagedItemRequest";
 export type { PostStatusRequest } from "./model/net/request/PostStatusRequest";
+export type { TokenRequest } from "./model/net/request/TokenRequest";
 export type { FollowRequest } from "./model/net/request/FollowRequest";
+export type { UserRequest } from "./model/net/request/UserRequest";
 export type { FollowerStatusRequest } from "./model/net/request/FollowerStatusRequest";
 //
 // Responses
@@ -38,6 +40,7 @@ export type { TweeterResponse } from "./model/net/response/TweeterResponse";
 export type { FollowCountResponse } from "./model/net/response/FollowCountResponse";
 export type { FollowResponse } from "./model/net/response/FollowResponse";
 export type { FollowerStatusResponse } from "./model/net/response/FollowerStatusResponse";
+export type { UserResponse } from "./model/net/response/UserResponse";
 //
 // Others
 //
