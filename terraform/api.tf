@@ -31,15 +31,26 @@ locals {
     }
     "followee/count" = {
       function_key = "get_followee_count"
-      description  = "Returns how many users the given user follows. The JSON body is a FollowCountRequest. The response is a FollowCountResponse."
+      description  = "Returns how many users the given user follows. The JSON body is a FollowRequest. The response is a FollowCountResponse."
     }
     "follower/count" = {
       function_key = "get_follower_count"
-      description  = "Returns how many users follow the given user. The JSON body is a FollowCountRequest. The response is a FollowCountResponse."
+      description  = "Returns how many users follow the given user. The JSON body is a FollowRequest. The response is a FollowCountResponse."
+    }
+    "follow" = {
+      function_key = "follow"
+      description  = "Follows the given user. The JSON body is a FollowRequest. The response is a FollowResponse."
     }
   }
 
-  route_parents = toset([for path in keys(local.routes) : split("/", path)[0]])
+  route_segments = {
+    for path in keys(local.routes) : path => split("/", path)
+  }
+
+  route_parents = toset([
+    for path, segments in local.route_segments : segments[0]
+    if length(segments) > 1
+  ])
 
   post_responses = {
     for pair in setproduct(keys(local.routes), local.post_status_codes) :
@@ -79,8 +90,12 @@ resource "aws_api_gateway_resource" "route" {
   for_each = local.routes
 
   rest_api_id = aws_api_gateway_rest_api.tweeter.id
-  parent_id   = aws_api_gateway_resource.parent[split("/", each.key)[0]].id
-  path_part   = split("/", each.key)[1]
+  parent_id = (
+    length(local.route_segments[each.key]) > 1
+    ? aws_api_gateway_resource.parent[local.route_segments[each.key][0]].id
+    : aws_api_gateway_rest_api.tweeter.root_resource_id
+  )
+  path_part = local.route_segments[each.key][length(local.route_segments[each.key]) - 1]
 }
 
 resource "aws_api_gateway_method" "post" {

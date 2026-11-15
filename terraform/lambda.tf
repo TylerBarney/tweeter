@@ -34,6 +34,10 @@ locals {
       function_name = "GetFollowerCount"
       handler       = "lambda/follow/GetFollowerCountLambda.handler"
     }
+    follow = {
+      function_name = "Follow"
+      handler       = "lambda/follow/FollowLambda.handler"
+    }
   }
 }
 

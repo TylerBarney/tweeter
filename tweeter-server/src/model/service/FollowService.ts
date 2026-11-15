@@ -38,15 +38,15 @@ export class FollowService implements Service {
   }
 
   public async follow(
-    authToken: AuthToken,
-    userToFollow: User,
+    token: string,
+    userToFollow: UserDto,
   ): Promise<[followerCount: number, followeeCount: number]> {
     // Pause so we can see the follow message. Remove when connected to the server
     await new Promise((f) => setTimeout(f, 2000));
 
     // TODO: Call the server
 
-    return this.countsFor(authToken, userToFollow);
+    return this.countsFor(token, userToFollow);
   }
 
   public async unfollow(
@@ -58,16 +58,15 @@ export class FollowService implements Service {
 
     // TODO: Call the server
 
-    return this.countsFor(authToken, userToUnfollow);
+    return this.countsFor(authToken.token, userToUnfollow.dto);
   }
 
   private async countsFor(
-    authToken: AuthToken,
-    user: User,
+    token: string,
+    user: UserDto,
   ): Promise<[followerCount: number, followeeCount: number]> {
-    const userDto = user.dto;
-    const followerCount = await this.getFollowerCount(authToken.token, userDto);
-    const followeeCount = await this.getFolloweeCount(authToken.token, userDto);
+    const followerCount = await this.getFollowerCount(token, user);
+    const followeeCount = await this.getFolloweeCount(token, user);
     return [followerCount, followeeCount];
   }
 

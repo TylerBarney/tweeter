@@ -75,3 +75,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Add GetFollowerCountLambda and POST /follower/count, and share the follow-count handler and fake-count lookup with the followee count.
 - Review: Changed some of the mark down files to reduce verboseness. Also removed some unnecessary and overly complicated lines of code from FollowService.ts
+
+## 2026-11-15: tweeter-shared/src/model/net/request/FollowRequest.ts (new file), tweeter-shared/src/model/net/request/FollowCountRequest.ts (deleted), tweeter-shared/src/model/net/response/FollowResponse.ts (new file), tweeter-shared/src/index.ts, tweeter-server/src/lambda/follow/FollowLambda.ts (new file), tweeter-server/src/lambda/follow/FollowCountHandler.ts, tweeter-server/src/model/service/FollowService.ts, terraform/lambda.tf, terraform/api.tf, terraform/outputs.tf, tweeter-server/function.zip, tweeter-server/layer.zip, reference/lambda-api.md, reference/architecture.md, AGENTS.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add FollowLambda and POST /follow, change follow to take a token and a UserDto.
+- Review: Introduced Code duplication with FollowRequest interface and FollowCountRequest. Factored out duplication with a single FollowRequest
