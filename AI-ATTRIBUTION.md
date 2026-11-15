@@ -87,3 +87,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Add UnfollowLambda and POST /unfollow, share the follow response handler with Follow, and change unfollow to take a token and a UserDto.
 - Review: Everything looked good
+
+## 2026-11-15: tweeter-shared/src/model/net/request/FollowerStatusRequest.ts (new file), tweeter-shared/src/model/net/response/FollowerStatusResponse.ts (new file), tweeter-shared/src/index.ts, tweeter-server/src/lambda/follow/GetFollowerStatusLambda.ts (new file), tweeter-server/src/model/service/FollowService.ts, terraform/lambda.tf, terraform/api.tf, terraform/outputs.tf, tweeter-server/function.zip, tweeter-server/layer.zip, reference/lambda-api.md, reference/architecture.md, AGENTS.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add GetFollowerStatusLambda and POST /follower/status, and change getIsFollowerStatus to take a token and two UserDtos.
+- Review: Everything looked good

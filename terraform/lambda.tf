@@ -42,6 +42,10 @@ locals {
       function_name = "Unfollow"
       handler       = "lambda/follow/UnfollowLambda.handler"
     }
+    get_follower_status = {
+      function_name = "GetFollowerStatus"
+      handler       = "lambda/follow/GetFollowerStatusLambda.handler"
+    }
   }
 }
 
