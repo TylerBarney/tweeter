@@ -65,26 +65,18 @@ export class FollowService implements Service {
     authToken: AuthToken,
     user: User,
   ): Promise<[followerCount: number, followeeCount: number]> {
-    const followerCount = await this.getFollowerCount(authToken, user);
-    const followeeCount = await this.getFolloweeCount(
-      authToken.token,
-      user.dto,
-    );
+    const userDto = user.dto;
+    const followerCount = await this.getFollowerCount(authToken.token, userDto);
+    const followeeCount = await this.getFolloweeCount(authToken.token, userDto);
     return [followerCount, followeeCount];
   }
 
-  public async getFolloweeCount(
-    token: string,
-    user: UserDto,
-  ): Promise<number> {
+  public async getFolloweeCount(token: string, user: UserDto): Promise<number> {
     // TODO: Replace with the result of calling server
     return FakeData.instance.getFolloweeCount(user.alias);
   }
 
-  public async getFollowerCount(
-    authToken: AuthToken,
-    user: User,
-  ): Promise<number> {
+  public async getFollowerCount(token: string, user: UserDto): Promise<number> {
     // TODO: Replace with the result of calling server
     return FakeData.instance.getFollowerCount(user.alias);
   }

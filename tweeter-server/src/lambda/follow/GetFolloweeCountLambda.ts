@@ -1,17 +1,7 @@
 // AI-assisted: see AI-ATTRIBUTION.md
-import { FollowCountRequest, FollowCountResponse } from "tweeter-shared";
 import { FollowService } from "../../model/service/FollowService";
+import { createFollowCountHandler } from "./FollowCountHandler";
 
-export const handler = async (
-  request: FollowCountRequest,
-): Promise<FollowCountResponse> => {
-  const count = await new FollowService().getFolloweeCount(
-    request.token,
-    request.user,
-  );
-  return {
-    success: true,
-    message: null,
-    count,
-  };
-};
+export const handler = createFollowCountHandler((token, user) =>
+  new FollowService().getFolloweeCount(token, user),
+);

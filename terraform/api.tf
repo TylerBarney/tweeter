@@ -33,6 +33,10 @@ locals {
       function_key = "get_followee_count"
       description  = "Returns how many users the given user follows. The JSON body is a FollowCountRequest. The response is a FollowCountResponse."
     }
+    "follower/count" = {
+      function_key = "get_follower_count"
+      description  = "Returns how many users follow the given user. The JSON body is a FollowCountRequest. The response is a FollowCountResponse."
+    }
   }
 
   route_parents = toset([for path in keys(local.routes) : split("/", path)[0]])

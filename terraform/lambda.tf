@@ -30,6 +30,10 @@ locals {
       function_name = "GetFolloweeCount"
       handler       = "lambda/follow/GetFolloweeCountLambda.handler"
     }
+    get_follower_count = {
+      function_name = "GetFollowerCount"
+      handler       = "lambda/follow/GetFollowerCountLambda.handler"
+    }
   }
 }
 

@@ -48,7 +48,11 @@ Both status-page events are a `PagedUserStatusItemRequest`: `token`, `userAlias`
 
 POST `/status/post` invokes function `PostStatus`, handler `lambda/status/PostStatusLambda.handler`. It calls `StatusService.postStatus`. Terraform output `status_post_url` is the deployed URL. The event is a `PostStatusRequest`: `token` and `newStatus` (`StatusDto`). The return value is a `TweeterResponse`: `success` and `message`. `postStatus` still only pauses and does not store the status.
 
-POST `/followee/count` invokes function `GetFolloweeCount`, handler `lambda/follow/GetFolloweeCountLambda.handler`. It calls `FollowService.getFolloweeCount`. Terraform output `followee_count_url` is the deployed URL. The event is a `FollowCountRequest`: `token` and `user` (`UserDto`). The return value is a `FollowCountResponse`: `success`, `message`, and `count`. The count still comes from `FakeData` and is a random integer from 1 to 10.
+POST `/followee/count` invokes function `GetFolloweeCount`, handler `lambda/follow/GetFolloweeCountLambda.handler`. It calls `FollowService.getFolloweeCount`. Terraform output `followee_count_url` is the deployed URL.
+
+POST `/follower/count` invokes function `GetFollowerCount`, handler `lambda/follow/GetFollowerCountLambda.handler`. It calls `FollowService.getFollowerCount`. Terraform output `follower_count_url` is the deployed URL.
+
+Both count events are a `FollowCountRequest`: `token` and `user` (`UserDto`). Both return a `FollowCountResponse`: `success`, `message`, and `count`. Both handlers are built by `createFollowCountHandler`. The count still comes from `FakeData` and is a random integer from 1 to 10.
 
 `TweeterRequest` is `token` only. A request that pages by user adds `userAlias` on `PagedItemRequest`. `PostStatusRequest` does not have `userAlias`. `FollowCountRequest` carries the user as a `UserDto`.
 
