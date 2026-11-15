@@ -2,7 +2,7 @@
 
 ## Current client
 
-The client still reads dummy data. The deployed routes are POST `/followee/list`, POST `/follower/list`, POST `/followee/count`, POST `/follower/count`, POST `/follow`, POST `/stories/list`, POST `/feed/list`, and POST `/status/post`. The facade, DAOs, and the other operations are not built yet. Today the client looks like this:
+The client still reads dummy data. The deployed routes are POST `/followee/list`, POST `/follower/list`, POST `/followee/count`, POST `/follower/count`, POST `/follow`, POST `/unfollow`, POST `/stories/list`, POST `/feed/list`, and POST `/status/post`. The facade, DAOs, and the other operations are not built yet. Today the client looks like this:
 
 ```
 view (React components and hooks)
@@ -48,7 +48,7 @@ Async service calls return to the presenter with async/await. The presenter neve
 
 ## Deployed API
 
-POST `/followee/list`, POST `/follower/list`, POST `/followee/count`, POST `/follower/count`, POST `/follow`, POST `/stories/list`, POST `/feed/list`, and POST `/status/post` are the live routes. API Gateway sends each JSON body to its Lambda as the event. The list handlers call the matching server service and still return `FakeData`. `GetFolloweeCount` and `GetFollowerCount` call `FollowService.getFolloweeCount` and `FollowService.getFollowerCount` and return a `FollowCountResponse`. `Follow` calls `FollowService.follow` and returns a `FollowResponse`. `PostStatus` calls `StatusService.postStatus` and returns a `TweeterResponse`. The integration is `AWS`, not `AWS_PROXY`, so each handler takes a request DTO and returns a response DTO. HTTP 200 is that return value. HTTP 400 and 500 happen only when the Lambda throws `[Bad Request]` or `[Server Error]`.
+POST `/followee/list`, POST `/follower/list`, POST `/followee/count`, POST `/follower/count`, POST `/follow`, POST `/unfollow`, POST `/stories/list`, POST `/feed/list`, and POST `/status/post` are the live routes. API Gateway sends each JSON body to its Lambda as the event. The list handlers call the matching server service and still return `FakeData`. `GetFolloweeCount` and `GetFollowerCount` call `FollowService.getFolloweeCount` and `FollowService.getFollowerCount` and return a `FollowCountResponse`. `Follow` and `Unfollow` call `FollowService.follow` and `FollowService.unfollow` and return a `FollowResponse`. `PostStatus` calls `StatusService.postStatus` and returns a `TweeterResponse`. The integration is `AWS`, not `AWS_PROXY`, so each handler takes a request DTO and returns a response DTO. HTTP 200 is that return value. HTTP 400 and 500 happen only when the Lambda throws `[Bad Request]` or `[Server Error]`.
 
 Region, shared role, layer, zip layout, CORS, and the steps for the next route are in [lambda-api.md](lambda-api.md).
 

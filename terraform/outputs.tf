@@ -37,3 +37,8 @@ output "follow_url" {
   description = "POST /follow on the dev stage"
   value       = "${aws_api_gateway_stage.dev.invoke_url}/follow"
 }
+
+output "unfollow_url" {
+  description = "POST /unfollow on the dev stage"
+  value       = "${aws_api_gateway_stage.dev.invoke_url}/unfollow"
+}

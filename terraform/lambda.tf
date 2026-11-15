@@ -38,6 +38,10 @@ locals {
       function_name = "Follow"
       handler       = "lambda/follow/FollowLambda.handler"
     }
+    unfollow = {
+      function_name = "Unfollow"
+      handler       = "lambda/follow/UnfollowLambda.handler"
+    }
   }
 }
 

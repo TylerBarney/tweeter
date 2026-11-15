@@ -41,24 +41,25 @@ export class FollowService implements Service {
     token: string,
     userToFollow: UserDto,
   ): Promise<[followerCount: number, followeeCount: number]> {
-    // Pause so we can see the follow message. Remove when connected to the server
-    await new Promise((f) => setTimeout(f, 2000));
-
     // TODO: Call the server
-
-    return this.countsFor(token, userToFollow);
+    return this.countsAfterPause(token, userToFollow);
   }
 
   public async unfollow(
-    authToken: AuthToken,
-    userToUnfollow: User,
+    token: string,
+    user: UserDto,
   ): Promise<[followerCount: number, followeeCount: number]> {
-    // Pause so we can see the unfollow message. Remove when connected to the server
-    await new Promise((f) => setTimeout(f, 2000));
-
     // TODO: Call the server
+    return this.countsAfterPause(token, user);
+  }
 
-    return this.countsFor(authToken.token, userToUnfollow.dto);
+  private async countsAfterPause(
+    token: string,
+    user: UserDto,
+  ): Promise<[followerCount: number, followeeCount: number]> {
+    // Pause so we can see the follow or unfollow message. Remove when connected to the server
+    await new Promise((f) => setTimeout(f, 2000));
+    return this.countsFor(token, user);
   }
 
   private async countsFor(

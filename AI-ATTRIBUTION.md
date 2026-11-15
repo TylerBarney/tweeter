@@ -81,3 +81,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Add FollowLambda and POST /follow, change follow to take a token and a UserDto.
 - Review: Introduced Code duplication with FollowRequest interface and FollowCountRequest. Factored out duplication with a single FollowRequest
+
+## 2026-11-15: tweeter-server/src/lambda/follow/FollowHandler.ts (new file), tweeter-server/src/lambda/follow/FollowLambda.ts, tweeter-server/src/lambda/follow/UnfollowLambda.ts (new file), tweeter-server/src/model/service/FollowService.ts, terraform/lambda.tf, terraform/api.tf, terraform/outputs.tf, tweeter-server/function.zip, tweeter-server/layer.zip, reference/lambda-api.md, reference/architecture.md, AGENTS.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add UnfollowLambda and POST /unfollow, share the follow response handler with Follow, and change unfollow to take a token and a UserDto.
+- Review: Everything looked good

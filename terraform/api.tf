@@ -41,6 +41,10 @@ locals {
       function_key = "follow"
       description  = "Follows the given user. The JSON body is a FollowRequest. The response is a FollowResponse."
     }
+    "unfollow" = {
+      function_key = "unfollow"
+      description  = "Unfollows the given user. The JSON body is a FollowRequest. The response is a FollowResponse."
+    }
   }
 
   route_segments = {
