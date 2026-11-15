@@ -61,6 +61,10 @@ locals {
       function_key = "register"
       description  = "Registers a user and signs them in. The JSON body is a RegisterRequest. The response is an AuthenticationResponse."
     }
+    "user/logout" = {
+      function_key = "logout"
+      description  = "Signs out the authenticated user. The JSON body is a TokenRequest. The response is a TweeterResponse."
+    }
   }
 
   route_segments = {

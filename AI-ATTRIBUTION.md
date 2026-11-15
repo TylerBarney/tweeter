@@ -111,3 +111,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Add RegisterLambda and POST /user/register. RegisterRequest extends LoginRequest, register returns a UserDto and AuthTokenDto, and LoginResponse is renamed to AuthenticationResponse. Login and register share one handler and one service helper.
 - Review: Had to correct changing the image into a string.
+
+## 2026-11-15: tweeter-server/src/lambda/user/LogoutLambda.ts (new file), tweeter-server/src/model/service/UserService.ts, terraform/lambda.tf, terraform/api.tf, terraform/outputs.tf, tweeter-server/function.zip, tweeter-server/layer.zip, reference/lambda-api.md, reference/architecture.md, AGENTS.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add LogoutLambda and POST /user/logout. The request is a TokenRequest, logout takes a token string, and the response is a TweeterResponse.
+- Review: Everything looked good
