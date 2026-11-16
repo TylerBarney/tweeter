@@ -16,6 +16,10 @@ export class UserService implements Service {
     alias: string,
     password: string,
   ): Promise<[UserDto, AuthTokenDto]> {
+    if (!alias?.trim()) {
+      throw new Error("[Bad Request] alias is required");
+    }
+
     // TODO: Replace with the result of calling the server
     return this.firstUserAndToken("Invalid alias or password");
   }

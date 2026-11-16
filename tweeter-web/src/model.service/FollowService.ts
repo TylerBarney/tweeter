@@ -5,12 +5,9 @@ import {
   PagedUserItemRequest,
   User,
 } from "tweeter-shared";
-import { ServerFacade } from "../network/ServerFacade";
 import { Service } from "./Service";
 
-export class FollowService implements Service {
-  private readonly serverFacade = new ServerFacade();
-
+export class FollowService extends Service {
   public loadMoreFollowees(
     authToken: AuthToken,
     userAlias: string,

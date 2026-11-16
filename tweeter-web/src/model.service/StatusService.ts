@@ -1,11 +1,8 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import { AuthToken, PagedUserStatusItemRequest, Status } from "tweeter-shared";
-import { ServerFacade } from "../network/ServerFacade";
 import { Service } from "./Service";
 
-export class StatusService implements Service {
-  private readonly serverFacade = new ServerFacade();
-
+export class StatusService extends Service {
   public loadMoreStoryItems(
     authToken: AuthToken,
     userAlias: string,

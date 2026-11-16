@@ -123,3 +123,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Add ClientCommunicator and ServerFacade, and change the client services to call all 14 deployed endpoints instead of FakeData.
 - Review: Did a surprisingly great job. Even removed the duplication
+
+## 2026-11-16: tweeter-web/test/network/ServerFacade.integration.test.ts (new file), tweeter-web/test/model.service/StatusService.integration.test.ts (new file), tweeter-web/src/model.service/Service.ts, tweeter-web/src/model.service/UserService.ts, tweeter-web/src/model.service/FollowService.ts, tweeter-web/src/model.service/StatusService.ts, tweeter-web/package.json, package-lock.json, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add Jest integration tests that call the deployed API through ServerFacade for register, followers, and follow counts, and through StatusService for a successful story page.
+- Review: Had to fix tests to load consecutive pages rather than just testing one page retrival. Added spies to StatusService integration tests. Edited Service classes so I could stub in a ServerFacade.

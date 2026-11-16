@@ -62,7 +62,7 @@ POST `/user/login` invokes function `Login`, handler `lambda/user/LoginLambda.ha
 
 POST `/user/register` invokes function `Register`, handler `lambda/user/RegisterLambda.handler`. It calls `UserService.register`. Terraform output `user_register_url` is the deployed URL. The event is a `RegisterRequest`, which extends `LoginRequest` with `firstName`, `lastName`, `userImageBytes` (a string), and `imageFileExtension`.
 
-Both return an `AuthenticationResponse`: `success`, `message`, `user` (`UserDto`), and `authToken` (`AuthTokenDto`). Both handlers are built by `createAuthenticationHandler`. `login` and `register` both return the first `FakeData` user and that data's auth token through `firstUserAndToken`. Neither handler throws `[Bad Request]` or `[Server Error]`. Both routes still have the shared 200, 400, and 500 integration responses.
+Both return an `AuthenticationResponse`: `success`, `message`, `user` (`UserDto`), and `authToken` (`AuthTokenDto`). Both handlers are built by `createAuthenticationHandler`. `login` and `register` both return the first `FakeData` user and that data's auth token through `firstUserAndToken`. `login` throws `[Bad Request]` when the alias is empty. Neither handler throws `[Server Error]`. Both routes still have the shared 200, 400, and 500 integration responses.
 
 POST `/user/logout` invokes function `Logout`, handler `lambda/user/LogoutLambda.handler`. It calls `UserService.logout`. Terraform output `user_logout_url` is the deployed URL. The event is a `TokenRequest`: `token`. The return value is a `TweeterResponse`: `success` and `message`. `logout` still only pauses. The handler does not throw `[Bad Request]` or `[Server Error]`. The route has the shared 200, 400, and 500 integration responses.
 

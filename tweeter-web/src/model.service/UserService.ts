@@ -1,12 +1,9 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import { AuthToken, User } from "tweeter-shared";
 import { Buffer } from "buffer";
-import { ServerFacade } from "../network/ServerFacade";
 import { Service } from "./Service";
 
-export class UserService implements Service {
-  private readonly serverFacade = new ServerFacade();
-
+export class UserService extends Service {
   public async getUser(
     authToken: AuthToken,
     alias: string,
