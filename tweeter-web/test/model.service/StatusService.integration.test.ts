@@ -73,7 +73,7 @@ async function expectStoryPage(
 
   const request = {
     token: authToken.token,
-    userAlias: "@allen",
+    alias: "@allen",
     pageSize: 10,
     lastItem: lastItem === null ? null : lastItem.dto,
   };

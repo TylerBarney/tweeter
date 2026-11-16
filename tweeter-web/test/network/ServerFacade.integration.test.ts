@@ -83,7 +83,7 @@ async function expectFollowerPage(
   );
   const [followers, hasMore] = await serverFacade.getMoreFollowers({
     token,
-    userAlias: allen.alias,
+    alias: allen.alias,
     pageSize: 10,
     lastItem: lastItem === null ? null : lastItem.dto,
   });

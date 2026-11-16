@@ -38,13 +38,13 @@ POST `/followee/list` invokes function `GetFollowees`, handler `lambda/follow/Ge
 
 POST `/follower/list` invokes function `GetFollowers`, handler `lambda/follow/GetFollowersLambda.handler`. It calls `FollowService.loadMoreFollowers`. Terraform output `follower_list_url` is the deployed URL.
 
-Both follow events are a `PagedUserItemRequest`: `token`, `userAlias`, `pageSize` (a JSON number), and `lastItem` (`UserDto` or null). Both return a `PagedUserItemResponse`: `success`, `message`, `hasMore`, and `items`. Both services still use `FakeData`.
+Both follow events are a `PagedUserItemRequest`: `token`, `alias`, `pageSize` (a JSON number), and `lastItem` (`UserDto` or null). Both return a `PagedUserItemResponse`: `success`, `message`, `hasMore`, and `items`. Both services still use `FakeData`.
 
 POST `/stories/list` invokes function `GetStories`, handler `lambda/status/GetStoriesLambda.handler`. It calls `StatusService.loadMoreStoryItems`. Terraform output `stories_list_url` is the deployed URL.
 
 POST `/feed/list` invokes function `GetFeed`, handler `lambda/status/GetFeedLambda.handler`. It calls `StatusService.loadMoreFeedItems`. Terraform output `feed_list_url` is the deployed URL.
 
-Both status-page events are a `PagedUserStatusItemRequest`: `token`, `userAlias`, `pageSize`, and `lastItem` (`StatusDto` or null). Both return a `PagedStatusItemResponse`. Both services still use `FakeData`.
+Both status-page events are a `PagedUserStatusItemRequest`: `token`, `alias`, `pageSize`, and `lastItem` (`StatusDto` or null). Both return a `PagedStatusItemResponse`. Both services still use `FakeData`.
 
 POST `/status/post` invokes function `PostStatus`, handler `lambda/status/PostStatusLambda.handler`. It calls `StatusService.postStatus`. Terraform output `status_post_url` is the deployed URL. The event is a `PostStatusRequest`: `token` and `newStatus` (`StatusDto`). The return value is a `TweeterResponse`: `success` and `message`. `postStatus` still only pauses and does not store the status.
 
@@ -66,7 +66,7 @@ Both return an `AuthenticationResponse`: `success`, `message`, `user` (`UserDto`
 
 POST `/user/logout` invokes function `Logout`, handler `lambda/user/LogoutLambda.handler`. It calls `UserService.logout`. Terraform output `user_logout_url` is the deployed URL. The event is a `TokenRequest`: `token`. The return value is a `TweeterResponse`: `success` and `message`. `logout` still only pauses. The handler does not throw `[Bad Request]` or `[Server Error]`. The route has the shared 200, 400, and 500 integration responses.
 
-`TweeterRequest` has no fields. `TokenRequest` extends it and adds `token`. A request that pages by user adds `userAlias` on `PagedItemRequest`. `PostStatusRequest` does not have `userAlias`. `FollowRequest` carries the user as a `UserDto`. `FollowerStatusRequest` adds the selected user. `UserRequest` adds `alias`. `LoginRequest` adds `alias` and `password` and does not include a token. `RegisterRequest` extends `LoginRequest`. A route key with one segment, such as `follow` or `unfollow`, is a resource on the API root. A key with two segments still uses the first segment as the parent.
+`TweeterRequest` has no fields. `TokenRequest` extends it and adds `token`. `UserRequest` adds `alias`. `PagedItemRequest` extends `UserRequest` and adds `pageSize` and `lastItem`. `PostStatusRequest` does not extend `UserRequest`. `FollowRequest` carries the user as a `UserDto`. `FollowerStatusRequest` adds the selected user. `LoginRequest` adds `alias` and `password` and does not include a token. `RegisterRequest` extends `LoginRequest`. A route key with one segment, such as `follow` or `unfollow`, is a resource on the API root. A key with two segments still uses the first segment as the parent.
 
 Handlers live in `local.lambda_handlers` in `terraform/lambda.tf`. Routes live in `local.routes` in `terraform/api.tf`. A route key is the path without a leading slash, such as `follower/list` or `follow`. The first segment of a two-part key is the parent resource, so another route under `/followee/...` reuses that parent and adds a sibling of `list`. POST, OPTIONS, CORS, the 400 and 500 selection patterns, the invoke permission, the deployment trigger, and `local.method_docs` are all generated from those maps.
 

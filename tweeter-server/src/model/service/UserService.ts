@@ -3,10 +3,7 @@ import { AuthTokenDto, FakeData, UserDto } from "tweeter-shared";
 import { Service } from "./Service";
 
 export class UserService implements Service {
-  public async getUser(
-    token: string,
-    alias: string,
-  ): Promise<UserDto | null> {
+  public async getUser(token: string, alias: string): Promise<UserDto | null> {
     // TODO: Replace with the result of calling server
     const user = FakeData.instance.findUserByAlias(alias);
     return user === null ? null : user.dto;
@@ -16,7 +13,7 @@ export class UserService implements Service {
     alias: string,
     password: string,
   ): Promise<[UserDto, AuthTokenDto]> {
-    if (!alias?.trim()) {
+    if (!alias.trim()) {
       throw new Error("[Bad Request] alias is required");
     }
 
@@ -36,9 +33,7 @@ export class UserService implements Service {
     return this.firstUserAndToken("Invalid registration");
   }
 
-  private firstUserAndToken(
-    failureMessage: string,
-  ): [UserDto, AuthTokenDto] {
+  private firstUserAndToken(failureMessage: string): [UserDto, AuthTokenDto] {
     const user = FakeData.instance.firstUser;
 
     if (user === null) {

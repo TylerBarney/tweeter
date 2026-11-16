@@ -1,8 +1,7 @@
 // AI-assisted: see AI-ATTRIBUTION.md
-import { TokenRequest } from "./TokenRequest";
+import { UserRequest } from "./UserRequest";
 
-export interface PagedItemRequest<T> extends TokenRequest {
-  readonly userAlias: string;
+export interface PagedItemRequest<T> extends UserRequest {
   readonly pageSize: number;
   readonly lastItem: T | null;
 }

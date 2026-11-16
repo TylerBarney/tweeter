@@ -1,5 +1,5 @@
 // AI-assisted: see AI-ATTRIBUTION.md
-import { AuthToken, PagedUserStatusItemRequest, Status } from "tweeter-shared";
+import { AuthToken, Status } from "tweeter-shared";
 import { Service } from "./Service";
 
 export class StatusService extends Service {
@@ -9,12 +9,8 @@ export class StatusService extends Service {
     pageSize: number,
     lastItem: Status | null,
   ): Promise<[Status[], boolean]> {
-    return this.loadMoreStatuses(
-      authToken,
-      userAlias,
-      pageSize,
-      lastItem,
-      (request) => this.serverFacade.getMoreStoryItems(request),
+    return this.serverFacade.getMoreStoryItems(
+      this.pagedRequest(authToken, userAlias, pageSize, lastItem),
     );
   }
 
@@ -24,12 +20,8 @@ export class StatusService extends Service {
     pageSize: number,
     lastItem: Status | null,
   ): Promise<[Status[], boolean]> {
-    return this.loadMoreStatuses(
-      authToken,
-      userAlias,
-      pageSize,
-      lastItem,
-      (request) => this.serverFacade.getMoreFeedItems(request),
+    return this.serverFacade.getMoreFeedItems(
+      this.pagedRequest(authToken, userAlias, pageSize, lastItem),
     );
   }
 
@@ -40,23 +32,6 @@ export class StatusService extends Service {
     await this.serverFacade.postStatus({
       token: authToken.token,
       newStatus: newStatus.dto,
-    });
-  }
-
-  private loadMoreStatuses(
-    authToken: AuthToken,
-    userAlias: string,
-    pageSize: number,
-    lastItem: Status | null,
-    loadPage: (
-      request: PagedUserStatusItemRequest,
-    ) => Promise<[Status[], boolean]>,
-  ): Promise<[Status[], boolean]> {
-    return loadPage({
-      token: authToken.token,
-      userAlias,
-      pageSize,
-      lastItem: lastItem === null ? null : lastItem.dto,
     });
   }
 }

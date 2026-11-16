@@ -166,7 +166,10 @@ export class ServerFacade {
     ];
   }
 
-  private async count(request: FollowRequest, endpoint: string): Promise<number> {
+  private async count(
+    request: FollowRequest,
+    endpoint: string,
+  ): Promise<number> {
     const response = await this.post<FollowRequest, FollowCountResponse>(
       request,
       endpoint,

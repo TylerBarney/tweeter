@@ -13,7 +13,7 @@ export const createPagedItemHandler =
   async (request: PagedItemRequest<T>): Promise<PagedItemResponse<T>> => {
     const [items, hasMore] = await loadPage(
       request.token,
-      request.userAlias,
+      request.alias,
       request.pageSize,
       request.lastItem,
     );

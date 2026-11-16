@@ -1,10 +1,5 @@
 // AI-assisted: see AI-ATTRIBUTION.md
-import {
-  AuthToken,
-  FollowRequest,
-  PagedUserItemRequest,
-  User,
-} from "tweeter-shared";
+import { AuthToken, User } from "tweeter-shared";
 import { Service } from "./Service";
 
 export class FollowService extends Service {
@@ -14,12 +9,8 @@ export class FollowService extends Service {
     pageSize: number,
     lastItem: User | null,
   ): Promise<[User[], boolean]> {
-    return this.loadMoreUsers(
-      authToken,
-      userAlias,
-      pageSize,
-      lastItem,
-      (request) => this.serverFacade.getMoreFollowees(request),
+    return this.serverFacade.getMoreFollowees(
+      this.pagedRequest(authToken, userAlias, pageSize, lastItem),
     );
   }
 
@@ -29,12 +20,8 @@ export class FollowService extends Service {
     pageSize: number,
     lastItem: User | null,
   ): Promise<[User[], boolean]> {
-    return this.loadMoreUsers(
-      authToken,
-      userAlias,
-      pageSize,
-      lastItem,
-      (request) => this.serverFacade.getMoreFollowers(request),
+    return this.serverFacade.getMoreFollowers(
+      this.pagedRequest(authToken, userAlias, pageSize, lastItem),
     );
   }
 
@@ -77,22 +64,7 @@ export class FollowService extends Service {
     });
   }
 
-  private loadMoreUsers(
-    authToken: AuthToken,
-    userAlias: string,
-    pageSize: number,
-    lastItem: User | null,
-    loadPage: (request: PagedUserItemRequest) => Promise<[User[], boolean]>,
-  ): Promise<[User[], boolean]> {
-    return loadPage({
-      token: authToken.token,
-      userAlias,
-      pageSize,
-      lastItem: lastItem === null ? null : lastItem.dto,
-    });
-  }
-
-  private followRequest(authToken: AuthToken, user: User): FollowRequest {
+  private followRequest(authToken: AuthToken, user: User) {
     return {
       token: authToken.token,
       user: user.dto,

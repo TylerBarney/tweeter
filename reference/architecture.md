@@ -33,7 +33,7 @@ Async service calls return to the presenter with async/await. The presenter neve
 
 ## Services
 
-`tweeter-web/src/model.service`. Three classes cover the 14 operations. Each calls `ServerFacade` in `tweeter-web/src/network`. `ClientCommunicator` performs the POST. The services build the shared request objects and return domain objects to presenters.
+`tweeter-web/src/model.service`. Three classes cover the 14 operations. Each builds a request object and passes it to `ServerFacade` in `tweeter-web/src/network`. The service classes do not import the shared request or response types. `ServerFacade` receives the request and returns domain objects. `ClientCommunicator` performs the POST.
 
 **UserService:** get user, login, register, logout.
 
@@ -66,7 +66,7 @@ view → presenter → client service
 
 - `tweeter-server` depends on `tweeter-shared`. One Lambda per feature delegates to a server-side service. Those services are the home of the data access that is in the client services now.
 - API Gateway exposes one endpoint per feature. Use POST for every endpoint, and put the auth token in the JSON body when a call needs it. Login and register responses carry a token.
-- `ServerFacade` has one method per endpoint and uses `ClientCommunicator` for the HTTP call. Client services call the facade and return domain objects to presenters.
+- `ServerFacade` has one method per endpoint, receives the shared request, and uses `ClientCommunicator` for the HTTP call. Client services build that request and return domain objects to presenters. They do not import the request or response types.
 - Server services go through DAOs. Users, sessions, follows, and statuses are stored in DynamoDB. Passwords are hashed. Profile images are stored on S3. Tokens expire after inactivity. Unauthorized calls fail at the API.
 - Posting a status updates the author's story and the feeds of current followers off the request path, so a large follower count does not make the post call fall over. A feed includes a status only when the viewer followed the author at post time. Older feed entries stay after an unfollow.
 - Until the DAOs exist, the server services can keep returning the same dummy data through the API. The client still must not touch `FakeData`.

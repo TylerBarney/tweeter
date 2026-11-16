@@ -1,6 +1,6 @@
 // AI-assisted: see AI-ATTRIBUTION.md
-import { AuthToken, User } from "tweeter-shared";
 import { Buffer } from "buffer";
+import { AuthToken, User } from "tweeter-shared";
 import { Service } from "./Service";
 
 export class UserService extends Service {
