@@ -1,0 +1,12 @@
+{
+  "name": "tweeter",
+  "install": "npm install && npm install --prefix tweeter-server && npm run build --prefix tweeter-shared",
+  "terminals": [
+    {
+      "name": "web",
+      "command": "npm start --prefix tweeter-web",
+      "description": "Vite dev server for tweeter-web on port 5173"
+    }
+  ],
+  "ports": [{ "name": "web", "port": 5173 }]
+}

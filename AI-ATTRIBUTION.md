@@ -141,3 +141,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: create post status sequence diagram
 - Review: Lots of little edits of functions left out and styling issue. Overall good, just missed a couple of things.
+
+## 2026-11-20: .cursor/environment.json (new file), AGENTS.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Set up this repo for cloud agent support with an environment install, the Vite dev server, and cloud-specific instructions.
+- Review: Worked well.

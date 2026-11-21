@@ -55,3 +55,11 @@ not exist. Use this format, with today's date:
   If a TypeScript file you created or changed does not already start
   with this line, add it as the first line:
   // AI-assisted: see AI-ATTRIBUTION.md
+
+## Cursor Cloud specific instructions
+
+Cloud Builds run the install command in `.cursor/environment.json` from the repo root: install the root workspaces, install `tweeter-server` (it is not a workspace), then build `tweeter-shared`. Re-run that same command when `package.json` or a lockfile changes. `tweeter-shared` publishes `dist/`; the server and the web package resolve that build.
+
+The web app is a Vite dev server. The environment starts it with `npm start` in `tweeter-web` and exposes port 5173. Vite is configured with `server.open`, so it tries to open a browser; the server still listens if that fails. There is no local API process. The client calls the deployed API.
+
+From `tweeter-web`, `npm test` runs Jest and `npm run build` typechecks and builds. From `tweeter-server`, `npm run build` compiles. Do not run `terraform apply` or `npm run package:lambda` unless the task asks for a deploy. AWS credentials are not in this repo.
