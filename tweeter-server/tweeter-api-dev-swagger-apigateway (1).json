@@ -1,0 +1,2233 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "version" : "2026-11-18T04:19:24Z",
+    "title" : "tweeter-api"
+  },
+  "host" : "dzsvmoov9b.execute-api.us-east-1.amazonaws.com",
+  "basePath" : "/dev",
+  "schemes" : [ "https" ],
+  "paths" : {
+    "/feed/list" : {
+      "post" : {
+        "description" : "Returns one page of statuses in the given user's feed. The JSON body is a PagedUserStatusItemRequest. The response is a PagedStatusItemResponse.",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "PagedUserStatusItemRequest",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/PagedUserStatusItemRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/PagedStatusItemResponse"
+            },
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "400" : {
+            "description" : "400 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "500" : {
+            "description" : "500 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:590184062710:function:GetFeed/invocations",
+          "httpMethod" : "POST",
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Bad Request\\].*" : {
+              "statusCode" : "400",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Server Error\\].*" : {
+              "statusCode" : "500",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "$input.json('$')"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "aws"
+        }
+      },
+      "options" : {
+        "description" : "CORS preflight for POST /feed/list.",
+        "consumes" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Methods" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Headers" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Methods" : "'POST,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "{\"statusCode\":200}"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "mock"
+        }
+      }
+    },
+    "/follow" : {
+      "post" : {
+        "description" : "Follows the given user. The JSON body is a FollowRequest. The response is a FollowResponse.",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "FollowRequest",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/FollowRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/FollowResponse"
+            },
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "400" : {
+            "description" : "400 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "500" : {
+            "description" : "500 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:590184062710:function:Follow/invocations",
+          "httpMethod" : "POST",
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Bad Request\\].*" : {
+              "statusCode" : "400",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Server Error\\].*" : {
+              "statusCode" : "500",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "$input.json('$')"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "aws"
+        }
+      },
+      "options" : {
+        "description" : "CORS preflight for POST /follow.",
+        "consumes" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Methods" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Headers" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Methods" : "'POST,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "{\"statusCode\":200}"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "mock"
+        }
+      }
+    },
+    "/followee/count" : {
+      "post" : {
+        "description" : "Returns how many users the given user follows. The JSON body is a FollowRequest. The response is a FollowCountResponse.",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "FollowRequest",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/FollowRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/FollowCountResponse"
+            },
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "400" : {
+            "description" : "400 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "500" : {
+            "description" : "500 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:590184062710:function:GetFolloweeCount/invocations",
+          "httpMethod" : "POST",
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Bad Request\\].*" : {
+              "statusCode" : "400",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Server Error\\].*" : {
+              "statusCode" : "500",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "$input.json('$')"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "aws"
+        }
+      },
+      "options" : {
+        "description" : "CORS preflight for POST /followee/count.",
+        "consumes" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Methods" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Headers" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Methods" : "'POST,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "{\"statusCode\":200}"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "mock"
+        }
+      }
+    },
+    "/followee/list" : {
+      "post" : {
+        "description" : "Returns one page of users the given user follows. The JSON body is a PagedUserItemRequest. The response is a PagedUserItemResponse.",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "PagedUserItemRequest",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/PagedUserItemRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/PagedUserItemResponse"
+            },
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "400" : {
+            "description" : "400 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "500" : {
+            "description" : "500 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:590184062710:function:GetFollowees/invocations",
+          "httpMethod" : "POST",
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Bad Request\\].*" : {
+              "statusCode" : "400",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Server Error\\].*" : {
+              "statusCode" : "500",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "$input.json('$')"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "aws"
+        }
+      },
+      "options" : {
+        "description" : "CORS preflight for POST /followee/list.",
+        "consumes" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Methods" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Headers" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Methods" : "'POST,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "{\"statusCode\":200}"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "mock"
+        }
+      }
+    },
+    "/follower/count" : {
+      "post" : {
+        "description" : "Returns how many users follow the given user. The JSON body is a FollowRequest. The response is a FollowCountResponse.",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "FollowRequest",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/FollowRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/FollowCountResponse"
+            },
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "400" : {
+            "description" : "400 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "500" : {
+            "description" : "500 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:590184062710:function:GetFollowerCount/invocations",
+          "httpMethod" : "POST",
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Bad Request\\].*" : {
+              "statusCode" : "400",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Server Error\\].*" : {
+              "statusCode" : "500",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "$input.json('$')"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "aws"
+        }
+      },
+      "options" : {
+        "description" : "CORS preflight for POST /follower/count.",
+        "consumes" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Methods" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Headers" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Methods" : "'POST,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "{\"statusCode\":200}"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "mock"
+        }
+      }
+    },
+    "/follower/list" : {
+      "post" : {
+        "description" : "Returns one page of users who follow the given user. The JSON body is a PagedUserItemRequest. The response is a PagedUserItemResponse.",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "PagedUserItemRequest",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/PagedUserItemRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/PagedUserItemResponse"
+            },
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "400" : {
+            "description" : "400 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "500" : {
+            "description" : "500 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:590184062710:function:GetFollowers/invocations",
+          "httpMethod" : "POST",
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Bad Request\\].*" : {
+              "statusCode" : "400",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Server Error\\].*" : {
+              "statusCode" : "500",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "$input.json('$')"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "aws"
+        }
+      },
+      "options" : {
+        "description" : "CORS preflight for POST /follower/list.",
+        "consumes" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Methods" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Headers" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Methods" : "'POST,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "{\"statusCode\":200}"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "mock"
+        }
+      }
+    },
+    "/follower/status" : {
+      "post" : {
+        "description" : "Returns whether the user follows the selected user. The JSON body is a FollowerStatusRequest. The response is a FollowerStatusResponse.",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "FollowerStatusRequest",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/FollowerStatusRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/FollowerStatusResponse"
+            },
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "400" : {
+            "description" : "400 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "500" : {
+            "description" : "500 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:590184062710:function:GetFollowerStatus/invocations",
+          "httpMethod" : "POST",
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Bad Request\\].*" : {
+              "statusCode" : "400",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Server Error\\].*" : {
+              "statusCode" : "500",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "$input.json('$')"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "aws"
+        }
+      },
+      "options" : {
+        "description" : "CORS preflight for POST /follower/status.",
+        "consumes" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Methods" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Headers" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Methods" : "'POST,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "{\"statusCode\":200}"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "mock"
+        }
+      }
+    },
+    "/status/post" : {
+      "post" : {
+        "description" : "Posts a status for the authenticated user. The JSON body is a PostStatusRequest. The response is a TweeterResponse.",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "PostStatusRequest",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/PostStatusRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/TweeterResponse"
+            },
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "400" : {
+            "description" : "400 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "500" : {
+            "description" : "500 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:590184062710:function:PostStatus/invocations",
+          "httpMethod" : "POST",
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Bad Request\\].*" : {
+              "statusCode" : "400",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Server Error\\].*" : {
+              "statusCode" : "500",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "$input.json('$')"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "aws"
+        }
+      },
+      "options" : {
+        "description" : "CORS preflight for POST /status/post.",
+        "consumes" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Methods" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Headers" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Methods" : "'POST,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "{\"statusCode\":200}"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "mock"
+        }
+      }
+    },
+    "/stories/list" : {
+      "post" : {
+        "description" : "Returns one page of statuses in the given user's story. The JSON body is a PagedUserStatusItemRequest. The response is a PagedStatusItemResponse.",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "PagedUserStatusItemRequest",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/PagedUserStatusItemRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/PagedStatusItemResponse"
+            },
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "400" : {
+            "description" : "400 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "500" : {
+            "description" : "500 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:590184062710:function:GetStories/invocations",
+          "httpMethod" : "POST",
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Bad Request\\].*" : {
+              "statusCode" : "400",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Server Error\\].*" : {
+              "statusCode" : "500",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "$input.json('$')"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "aws"
+        }
+      },
+      "options" : {
+        "description" : "CORS preflight for POST /stories/list.",
+        "consumes" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Methods" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Headers" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Methods" : "'POST,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "{\"statusCode\":200}"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "mock"
+        }
+      }
+    },
+    "/unfollow" : {
+      "post" : {
+        "description" : "Unfollows the given user. The JSON body is a FollowRequest. The response is a FollowResponse.",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "FollowRequest",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/FollowRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/FollowResponse"
+            },
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "400" : {
+            "description" : "400 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "500" : {
+            "description" : "500 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:590184062710:function:Unfollow/invocations",
+          "httpMethod" : "POST",
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Bad Request\\].*" : {
+              "statusCode" : "400",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Server Error\\].*" : {
+              "statusCode" : "500",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "$input.json('$')"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "aws"
+        }
+      },
+      "options" : {
+        "description" : "CORS preflight for POST /unfollow.",
+        "consumes" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Methods" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Headers" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Methods" : "'POST,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "{\"statusCode\":200}"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "mock"
+        }
+      }
+    },
+    "/user/get" : {
+      "post" : {
+        "description" : "Returns the user with the given alias. The JSON body is a UserRequest. The response is a UserResponse.",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "UserRequest",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/UserRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/UserResponse"
+            },
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "400" : {
+            "description" : "400 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "500" : {
+            "description" : "500 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:590184062710:function:GetUser/invocations",
+          "httpMethod" : "POST",
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Bad Request\\].*" : {
+              "statusCode" : "400",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Server Error\\].*" : {
+              "statusCode" : "500",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "$input.json('$')"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "aws"
+        }
+      },
+      "options" : {
+        "description" : "CORS preflight for POST /user/get.",
+        "consumes" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Methods" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Headers" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Methods" : "'POST,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "{\"statusCode\":200}"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "mock"
+        }
+      }
+    },
+    "/user/login" : {
+      "post" : {
+        "description" : "Signs in with an alias and password. The JSON body is a LoginRequest. The response is an AuthenticationResponse.",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "LoginRequest",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/LoginRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/AuthenticationResponse"
+            },
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "400" : {
+            "description" : "400 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "500" : {
+            "description" : "500 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:590184062710:function:Login/invocations",
+          "httpMethod" : "POST",
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Bad Request\\].*" : {
+              "statusCode" : "400",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Server Error\\].*" : {
+              "statusCode" : "500",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "$input.json('$')"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "aws"
+        }
+      },
+      "options" : {
+        "description" : "CORS preflight for POST /user/login.",
+        "consumes" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Methods" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Headers" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Methods" : "'POST,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "{\"statusCode\":200}"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "mock"
+        }
+      }
+    },
+    "/user/logout" : {
+      "post" : {
+        "description" : "Signs out the authenticated user. The JSON body is a TokenRequest. The response is a TweeterResponse.",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "TokenRequest",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/TokenRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/TweeterResponse"
+            },
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "400" : {
+            "description" : "400 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "500" : {
+            "description" : "500 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:590184062710:function:Logout/invocations",
+          "httpMethod" : "POST",
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Bad Request\\].*" : {
+              "statusCode" : "400",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Server Error\\].*" : {
+              "statusCode" : "500",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "$input.json('$')"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "aws"
+        }
+      },
+      "options" : {
+        "description" : "CORS preflight for POST /user/logout.",
+        "consumes" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Methods" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Headers" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Methods" : "'POST,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "{\"statusCode\":200}"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "mock"
+        }
+      }
+    },
+    "/user/register" : {
+      "post" : {
+        "description" : "Registers a user and signs them in. The JSON body is a RegisterRequest. The response is an AuthenticationResponse.",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "RegisterRequest",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/RegisterRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/AuthenticationResponse"
+            },
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "400" : {
+            "description" : "400 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          },
+          "500" : {
+            "description" : "500 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "uri" : "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:590184062710:function:Register/invocations",
+          "httpMethod" : "POST",
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Bad Request\\].*" : {
+              "statusCode" : "400",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            },
+            "^\\[Server Error\\].*" : {
+              "statusCode" : "500",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "$input.json('$')"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "aws"
+        }
+      },
+      "options" : {
+        "description" : "CORS preflight for POST /user/register.",
+        "consumes" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Methods" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Headers" : {
+                "type" : "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration" : {
+          "responses" : {
+            "default" : {
+              "statusCode" : "200",
+              "responseParameters" : {
+                "method.response.header.Access-Control-Allow-Methods" : "'POST,OPTIONS'",
+                "method.response.header.Access-Control-Allow-Headers" : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Origin" : "'*'"
+              }
+            }
+          },
+          "requestTemplates" : {
+            "application/json" : "{\"statusCode\":200}"
+          },
+          "passthroughBehavior" : "when_no_match",
+          "timeoutInMillis" : 29000,
+          "type" : "mock"
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "StatusDto" : {
+      "type" : "object",
+      "required" : [ "post", "segments", "timestamp", "user" ],
+      "properties" : {
+        "post" : {
+          "type" : "string"
+        },
+        "segments" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/PostSegmentDto"
+          }
+        },
+        "timestamp" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "Milliseconds since the Unix epoch."
+        },
+        "user" : {
+          "$ref" : "#/definitions/UserDto"
+        }
+      },
+      "title" : "StatusDto",
+      "description" : "A status in a story or feed."
+    },
+    "RegisterRequest" : {
+      "type" : "object",
+      "required" : [ "alias", "firstName", "imageFileExtension", "lastName", "password", "userImageBytes" ],
+      "properties" : {
+        "alias" : {
+          "type" : "string"
+        },
+        "firstName" : {
+          "type" : "string"
+        },
+        "imageFileExtension" : {
+          "type" : "string"
+        },
+        "lastName" : {
+          "type" : "string"
+        },
+        "password" : {
+          "type" : "string"
+        },
+        "userImageBytes" : {
+          "type" : "string"
+        }
+      },
+      "title" : "RegisterRequest",
+      "description" : "New user details for registration."
+    },
+    "UserDto" : {
+      "type" : "object",
+      "required" : [ "alias", "firstName", "imageUrl", "lastName" ],
+      "properties" : {
+        "alias" : {
+          "type" : "string"
+        },
+        "firstName" : {
+          "type" : "string"
+        },
+        "imageUrl" : {
+          "type" : "string"
+        },
+        "lastName" : {
+          "type" : "string"
+        }
+      },
+      "title" : "UserDto",
+      "description" : "Public user profile."
+    },
+    "FollowResponse" : {
+      "type" : "object",
+      "required" : [ "followeeCount", "followerCount", "message", "success" ],
+      "properties" : {
+        "followeeCount" : {
+          "type" : "integer"
+        },
+        "followerCount" : {
+          "type" : "integer"
+        },
+        "message" : {
+          "type" : "string",
+          "description" : "Null when the call succeeded."
+        },
+        "success" : {
+          "type" : "boolean"
+        }
+      },
+      "title" : "FollowResponse",
+      "description" : "Follower and followee counts after a follow change."
+    },
+    "AuthTokenDto" : {
+      "type" : "object",
+      "required" : [ "timestamp", "token" ],
+      "properties" : {
+        "timestamp" : {
+          "type" : "integer",
+          "format" : "int64",
+          "description" : "Milliseconds since the Unix epoch."
+        },
+        "token" : {
+          "type" : "string"
+        }
+      },
+      "title" : "AuthTokenDto",
+      "description" : "Session token returned by login and register."
+    },
+    "FollowerStatusRequest" : {
+      "type" : "object",
+      "required" : [ "selectedUser", "token", "user" ],
+      "properties" : {
+        "selectedUser" : {
+          "$ref" : "#/definitions/UserDto"
+        },
+        "token" : {
+          "type" : "string"
+        },
+        "user" : {
+          "$ref" : "#/definitions/UserDto"
+        }
+      },
+      "title" : "FollowerStatusRequest",
+      "description" : "The authenticated user and the selected user."
+    },
+    "LoginRequest" : {
+      "type" : "object",
+      "required" : [ "alias", "password" ],
+      "properties" : {
+        "alias" : {
+          "type" : "string"
+        },
+        "password" : {
+          "type" : "string"
+        }
+      },
+      "title" : "LoginRequest",
+      "description" : "Alias and password for sign-in."
+    },
+    "AuthenticationResponse" : {
+      "type" : "object",
+      "required" : [ "authToken", "message", "success", "user" ],
+      "properties" : {
+        "authToken" : {
+          "$ref" : "#/definitions/AuthTokenDto"
+        },
+        "message" : {
+          "type" : "string",
+          "description" : "Null when the call succeeded."
+        },
+        "success" : {
+          "type" : "boolean"
+        },
+        "user" : {
+          "$ref" : "#/definitions/UserDto"
+        }
+      },
+      "title" : "AuthenticationResponse",
+      "description" : "The signed-in user and session token."
+    },
+    "FollowerStatusResponse" : {
+      "type" : "object",
+      "required" : [ "isFollower", "message", "success" ],
+      "properties" : {
+        "isFollower" : {
+          "type" : "boolean"
+        },
+        "message" : {
+          "type" : "string",
+          "description" : "Null when the call succeeded."
+        },
+        "success" : {
+          "type" : "boolean"
+        }
+      },
+      "title" : "FollowerStatusResponse",
+      "description" : "Whether the user follows the selected user."
+    },
+    "FollowRequest" : {
+      "type" : "object",
+      "required" : [ "token", "user" ],
+      "properties" : {
+        "token" : {
+          "type" : "string"
+        },
+        "user" : {
+          "$ref" : "#/definitions/UserDto"
+        }
+      },
+      "title" : "FollowRequest",
+      "description" : "The authenticated user and the user they follow or count."
+    },
+    "UserResponse" : {
+      "type" : "object",
+      "required" : [ "message", "success", "user" ],
+      "properties" : {
+        "message" : {
+          "type" : "string",
+          "description" : "Null when the call succeeded."
+        },
+        "success" : {
+          "type" : "boolean"
+        },
+        "user" : {
+          "$ref" : "#/definitions/UserDto"
+        }
+      },
+      "title" : "UserResponse",
+      "description" : "The user for an alias. user is null when no user has that alias."
+    },
+    "PagedUserItemResponse" : {
+      "type" : "object",
+      "required" : [ "hasMore", "items", "message", "success" ],
+      "properties" : {
+        "hasMore" : {
+          "type" : "boolean"
+        },
+        "items" : {
+          "type" : "array",
+          "description" : "Null when there are no items.",
+          "items" : {
+            "$ref" : "#/definitions/UserDto"
+          }
+        },
+        "message" : {
+          "type" : "string",
+          "description" : "Null when the call succeeded."
+        },
+        "success" : {
+          "type" : "boolean"
+        }
+      },
+      "title" : "PagedUserItemResponse",
+      "description" : "One page of users. items is null when there are no items."
+    },
+    "PostSegmentDto" : {
+      "type" : "object",
+      "required" : [ "endPosition", "startPosition", "text", "type" ],
+      "properties" : {
+        "endPosition" : {
+          "type" : "integer"
+        },
+        "startPosition" : {
+          "type" : "integer"
+        },
+        "text" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : [ "Text", "Alias", "URL", "Newline" ]
+        }
+      },
+      "title" : "PostSegmentDto",
+      "description" : "One segment of a status post."
+    },
+    "TokenRequest" : {
+      "type" : "object",
+      "required" : [ "token" ],
+      "properties" : {
+        "token" : {
+          "type" : "string"
+        }
+      },
+      "title" : "TokenRequest",
+      "description" : "An authenticated call."
+    },
+    "TweeterResponse" : {
+      "type" : "object",
+      "required" : [ "message", "success" ],
+      "properties" : {
+        "message" : {
+          "type" : "string",
+          "description" : "Null when the call succeeded."
+        },
+        "success" : {
+          "type" : "boolean"
+        }
+      },
+      "title" : "TweeterResponse",
+      "description" : "Success flag and an optional message."
+    },
+    "PagedUserItemRequest" : {
+      "type" : "object",
+      "required" : [ "alias", "lastItem", "pageSize", "token" ],
+      "properties" : {
+        "alias" : {
+          "type" : "string"
+        },
+        "lastItem" : {
+          "$ref" : "#/definitions/UserDto"
+        },
+        "pageSize" : {
+          "type" : "integer"
+        },
+        "token" : {
+          "type" : "string"
+        }
+      },
+      "title" : "PagedUserItemRequest",
+      "description" : "One page of a follow list. lastItem is a UserDto, or null on the first page."
+    },
+    "PostStatusRequest" : {
+      "type" : "object",
+      "required" : [ "newStatus", "token" ],
+      "properties" : {
+        "newStatus" : {
+          "$ref" : "#/definitions/StatusDto"
+        },
+        "token" : {
+          "type" : "string"
+        }
+      },
+      "title" : "PostStatusRequest",
+      "description" : "A status to post for the authenticated user."
+    },
+    "UserRequest" : {
+      "type" : "object",
+      "required" : [ "alias", "token" ],
+      "properties" : {
+        "alias" : {
+          "type" : "string"
+        },
+        "token" : {
+          "type" : "string"
+        }
+      },
+      "title" : "UserRequest",
+      "description" : "An authenticated call for one user alias."
+    },
+    "FollowCountResponse" : {
+      "type" : "object",
+      "required" : [ "count", "message", "success" ],
+      "properties" : {
+        "count" : {
+          "type" : "integer"
+        },
+        "message" : {
+          "type" : "string",
+          "description" : "Null when the call succeeded."
+        },
+        "success" : {
+          "type" : "boolean"
+        }
+      },
+      "title" : "FollowCountResponse",
+      "description" : "A follow or follower count."
+    },
+    "PagedStatusItemResponse" : {
+      "type" : "object",
+      "required" : [ "hasMore", "items", "message", "success" ],
+      "properties" : {
+        "hasMore" : {
+          "type" : "boolean"
+        },
+        "items" : {
+          "type" : "array",
+          "description" : "Null when there are no items.",
+          "items" : {
+            "$ref" : "#/definitions/StatusDto"
+          }
+        },
+        "message" : {
+          "type" : "string",
+          "description" : "Null when the call succeeded."
+        },
+        "success" : {
+          "type" : "boolean"
+        }
+      },
+      "title" : "PagedStatusItemResponse",
+      "description" : "One page of statuses. items is null when there are no items."
+    },
+    "PagedUserStatusItemRequest" : {
+      "type" : "object",
+      "required" : [ "alias", "lastItem", "pageSize", "token" ],
+      "properties" : {
+        "alias" : {
+          "type" : "string"
+        },
+        "lastItem" : {
+          "$ref" : "#/definitions/StatusDto"
+        },
+        "pageSize" : {
+          "type" : "integer"
+        },
+        "token" : {
+          "type" : "string"
+        }
+      },
+      "title" : "PagedUserStatusItemRequest",
+      "description" : "One page of a story or feed. lastItem is a StatusDto, or null on the first page."
+    }
+  },
+  "x-amazon-apigateway-documentation" : {
+    "version" : "1",
+    "createdDate" : "2026-11-18T04:24:17Z",
+    "documentationParts" : [ {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/feed/list",
+        "method" : "OPTIONS"
+      },
+      "properties" : {
+        "description" : "CORS preflight for POST /feed/list."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/feed/list",
+        "method" : "POST"
+      },
+      "properties" : {
+        "description" : "Returns one page of statuses in the given user's feed. The JSON body is a PagedUserStatusItemRequest. The response is a PagedStatusItemResponse."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/follow",
+        "method" : "OPTIONS"
+      },
+      "properties" : {
+        "description" : "CORS preflight for POST /follow."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/follow",
+        "method" : "POST"
+      },
+      "properties" : {
+        "description" : "Follows the given user. The JSON body is a FollowRequest. The response is a FollowResponse."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/followee/count",
+        "method" : "OPTIONS"
+      },
+      "properties" : {
+        "description" : "CORS preflight for POST /followee/count."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/followee/count",
+        "method" : "POST"
+      },
+      "properties" : {
+        "description" : "Returns how many users the given user follows. The JSON body is a FollowRequest. The response is a FollowCountResponse."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/followee/list",
+        "method" : "OPTIONS"
+      },
+      "properties" : {
+        "description" : "CORS preflight for POST /followee/list."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/followee/list",
+        "method" : "POST"
+      },
+      "properties" : {
+        "description" : "Returns one page of users the given user follows. The JSON body is a PagedUserItemRequest. The response is a PagedUserItemResponse."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/follower/count",
+        "method" : "OPTIONS"
+      },
+      "properties" : {
+        "description" : "CORS preflight for POST /follower/count."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/follower/count",
+        "method" : "POST"
+      },
+      "properties" : {
+        "description" : "Returns how many users follow the given user. The JSON body is a FollowRequest. The response is a FollowCountResponse."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/follower/list",
+        "method" : "OPTIONS"
+      },
+      "properties" : {
+        "description" : "CORS preflight for POST /follower/list."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/follower/list",
+        "method" : "POST"
+      },
+      "properties" : {
+        "description" : "Returns one page of users who follow the given user. The JSON body is a PagedUserItemRequest. The response is a PagedUserItemResponse."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/follower/status",
+        "method" : "OPTIONS"
+      },
+      "properties" : {
+        "description" : "CORS preflight for POST /follower/status."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/follower/status",
+        "method" : "POST"
+      },
+      "properties" : {
+        "description" : "Returns whether the user follows the selected user. The JSON body is a FollowerStatusRequest. The response is a FollowerStatusResponse."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/status/post",
+        "method" : "OPTIONS"
+      },
+      "properties" : {
+        "description" : "CORS preflight for POST /status/post."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/status/post",
+        "method" : "POST"
+      },
+      "properties" : {
+        "description" : "Posts a status for the authenticated user. The JSON body is a PostStatusRequest. The response is a TweeterResponse."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/stories/list",
+        "method" : "OPTIONS"
+      },
+      "properties" : {
+        "description" : "CORS preflight for POST /stories/list."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/stories/list",
+        "method" : "POST"
+      },
+      "properties" : {
+        "description" : "Returns one page of statuses in the given user's story. The JSON body is a PagedUserStatusItemRequest. The response is a PagedStatusItemResponse."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/unfollow",
+        "method" : "OPTIONS"
+      },
+      "properties" : {
+        "description" : "CORS preflight for POST /unfollow."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/unfollow",
+        "method" : "POST"
+      },
+      "properties" : {
+        "description" : "Unfollows the given user. The JSON body is a FollowRequest. The response is a FollowResponse."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/user/get",
+        "method" : "OPTIONS"
+      },
+      "properties" : {
+        "description" : "CORS preflight for POST /user/get."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/user/get",
+        "method" : "POST"
+      },
+      "properties" : {
+        "description" : "Returns the user with the given alias. The JSON body is a UserRequest. The response is a UserResponse."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/user/login",
+        "method" : "OPTIONS"
+      },
+      "properties" : {
+        "description" : "CORS preflight for POST /user/login."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/user/login",
+        "method" : "POST"
+      },
+      "properties" : {
+        "description" : "Signs in with an alias and password. The JSON body is a LoginRequest. The response is an AuthenticationResponse."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/user/logout",
+        "method" : "OPTIONS"
+      },
+      "properties" : {
+        "description" : "CORS preflight for POST /user/logout."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/user/logout",
+        "method" : "POST"
+      },
+      "properties" : {
+        "description" : "Signs out the authenticated user. The JSON body is a TokenRequest. The response is a TweeterResponse."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/user/register",
+        "method" : "OPTIONS"
+      },
+      "properties" : {
+        "description" : "CORS preflight for POST /user/register."
+      }
+    }, {
+      "location" : {
+        "type" : "METHOD",
+        "path" : "/user/register",
+        "method" : "POST"
+      },
+      "properties" : {
+        "description" : "Registers a user and signs them in. The JSON body is a RegisterRequest. The response is an AuthenticationResponse."
+      }
+    } ]
+  },
+  "x-amazon-apigateway-security-policy" : "TLS_1_0"
+}

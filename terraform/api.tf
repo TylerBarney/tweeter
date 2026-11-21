@@ -10,60 +10,88 @@ locals {
 
   routes = {
     "followee/list" = {
-      function_key = "get_followees"
-      description  = "Returns one page of users the given user follows. The JSON body is a PagedUserItemRequest. The response is a PagedUserItemResponse."
+      function_key   = "get_followees"
+      description    = "Returns one page of users the given user follows. The JSON body is a PagedUserItemRequest. The response is a PagedUserItemResponse."
+      request_model  = "PagedUserItemRequest"
+      response_model = "PagedUserItemResponse"
     }
     "follower/list" = {
-      function_key = "get_followers"
-      description  = "Returns one page of users who follow the given user. The JSON body is a PagedUserItemRequest. The response is a PagedUserItemResponse."
+      function_key   = "get_followers"
+      description    = "Returns one page of users who follow the given user. The JSON body is a PagedUserItemRequest. The response is a PagedUserItemResponse."
+      request_model  = "PagedUserItemRequest"
+      response_model = "PagedUserItemResponse"
     }
     "stories/list" = {
-      function_key = "get_stories"
-      description  = "Returns one page of statuses in the given user's story. The JSON body is a PagedUserStatusItemRequest. The response is a PagedStatusItemResponse."
+      function_key   = "get_stories"
+      description    = "Returns one page of statuses in the given user's story. The JSON body is a PagedUserStatusItemRequest. The response is a PagedStatusItemResponse."
+      request_model  = "PagedUserStatusItemRequest"
+      response_model = "PagedStatusItemResponse"
     }
     "feed/list" = {
-      function_key = "get_feed"
-      description  = "Returns one page of statuses in the given user's feed. The JSON body is a PagedUserStatusItemRequest. The response is a PagedStatusItemResponse."
+      function_key   = "get_feed"
+      description    = "Returns one page of statuses in the given user's feed. The JSON body is a PagedUserStatusItemRequest. The response is a PagedStatusItemResponse."
+      request_model  = "PagedUserStatusItemRequest"
+      response_model = "PagedStatusItemResponse"
     }
     "status/post" = {
-      function_key = "post_status"
-      description  = "Posts a status for the authenticated user. The JSON body is a PostStatusRequest. The response is a TweeterResponse."
+      function_key   = "post_status"
+      description    = "Posts a status for the authenticated user. The JSON body is a PostStatusRequest. The response is a TweeterResponse."
+      request_model  = "PostStatusRequest"
+      response_model = "TweeterResponse"
     }
     "followee/count" = {
-      function_key = "get_followee_count"
-      description  = "Returns how many users the given user follows. The JSON body is a FollowRequest. The response is a FollowCountResponse."
+      function_key   = "get_followee_count"
+      description    = "Returns how many users the given user follows. The JSON body is a FollowRequest. The response is a FollowCountResponse."
+      request_model  = "FollowRequest"
+      response_model = "FollowCountResponse"
     }
     "follower/count" = {
-      function_key = "get_follower_count"
-      description  = "Returns how many users follow the given user. The JSON body is a FollowRequest. The response is a FollowCountResponse."
+      function_key   = "get_follower_count"
+      description    = "Returns how many users follow the given user. The JSON body is a FollowRequest. The response is a FollowCountResponse."
+      request_model  = "FollowRequest"
+      response_model = "FollowCountResponse"
     }
     "follow" = {
-      function_key = "follow"
-      description  = "Follows the given user. The JSON body is a FollowRequest. The response is a FollowResponse."
+      function_key   = "follow"
+      description    = "Follows the given user. The JSON body is a FollowRequest. The response is a FollowResponse."
+      request_model  = "FollowRequest"
+      response_model = "FollowResponse"
     }
     "unfollow" = {
-      function_key = "unfollow"
-      description  = "Unfollows the given user. The JSON body is a FollowRequest. The response is a FollowResponse."
+      function_key   = "unfollow"
+      description    = "Unfollows the given user. The JSON body is a FollowRequest. The response is a FollowResponse."
+      request_model  = "FollowRequest"
+      response_model = "FollowResponse"
     }
     "follower/status" = {
-      function_key = "get_follower_status"
-      description  = "Returns whether the user follows the selected user. The JSON body is a FollowerStatusRequest. The response is a FollowerStatusResponse."
+      function_key   = "get_follower_status"
+      description    = "Returns whether the user follows the selected user. The JSON body is a FollowerStatusRequest. The response is a FollowerStatusResponse."
+      request_model  = "FollowerStatusRequest"
+      response_model = "FollowerStatusResponse"
     }
     "user/get" = {
-      function_key = "get_user"
-      description  = "Returns the user with the given alias. The JSON body is a UserRequest. The response is a UserResponse."
+      function_key   = "get_user"
+      description    = "Returns the user with the given alias. The JSON body is a UserRequest. The response is a UserResponse."
+      request_model  = "UserRequest"
+      response_model = "UserResponse"
     }
     "user/login" = {
-      function_key = "login"
-      description  = "Signs in with an alias and password. The JSON body is a LoginRequest. The response is an AuthenticationResponse."
+      function_key   = "login"
+      description    = "Signs in with an alias and password. The JSON body is a LoginRequest. The response is an AuthenticationResponse."
+      request_model  = "LoginRequest"
+      response_model = "AuthenticationResponse"
     }
     "user/register" = {
-      function_key = "register"
-      description  = "Registers a user and signs them in. The JSON body is a RegisterRequest. The response is an AuthenticationResponse."
+      function_key   = "register"
+      description    = "Registers a user and signs them in. The JSON body is a RegisterRequest. The response is an AuthenticationResponse."
+      request_model  = "RegisterRequest"
+      response_model = "AuthenticationResponse"
     }
     "user/logout" = {
-      function_key = "logout"
-      description  = "Signs out the authenticated user. The JSON body is a TokenRequest. The response is a TweeterResponse."
+      function_key   = "logout"
+      description    = "Signs out the authenticated user. The JSON body is a TokenRequest. The response is a TweeterResponse."
+      request_model  = "TokenRequest"
+      response_model = "TweeterResponse"
     }
   }
 
@@ -129,6 +157,10 @@ resource "aws_api_gateway_method" "post" {
   resource_id   = aws_api_gateway_resource.route[each.key].id
   http_method   = "POST"
   authorization = "NONE"
+
+  request_models = {
+    "application/json" = aws_api_gateway_model.payload[each.value.request_model].name
+  }
 }
 
 resource "aws_api_gateway_integration" "post" {
@@ -158,6 +190,10 @@ resource "aws_api_gateway_method_response" "post" {
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin" = true
   }
+
+  response_models = each.value.status_code == "200" ? {
+    "application/json" = aws_api_gateway_model.payload[local.routes[each.value.path].response_model].name
+  } : {}
 }
 
 resource "aws_api_gateway_integration_response" "post_200" {
@@ -275,8 +311,11 @@ resource "aws_api_gateway_deployment" "dev" {
           post_method      = aws_api_gateway_method.post[path].id
           options_method   = aws_api_gateway_method.options[path].id
           route_resource   = aws_api_gateway_resource.route[path].id
+          request_model    = route.request_model
+          response_model   = route.response_model
         }
       }
+      api_models = sha1(jsonencode(local.api_model_bodies))
     }))
   }
 
@@ -291,6 +330,9 @@ resource "aws_api_gateway_deployment" "dev" {
     aws_api_gateway_integration.options,
     aws_api_gateway_integration_response.options,
     aws_lambda_permission.apigateway,
+    aws_api_gateway_model.dto,
+    aws_api_gateway_model.status,
+    aws_api_gateway_model.payload,
   ]
 }
 

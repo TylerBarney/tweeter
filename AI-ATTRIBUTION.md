@@ -135,3 +135,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Make PagedItemRequest extend UserRequest and use the inherited alias field, updating the paged handler, tests, and API docs. Web services still build the requests they pass to ServerFacade, through a shared helper, and do not import request or response types.
 - Review: Everything looked good for the most part but had to make a couple of changes to the service and server facade to match my style.
+
+## 2026-11-16: docs/diagrams/post-status-success.mmd, docs/diagrams/post-status-success.md, docs/diagrams/post-status-success.png, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: create post status sequence diagram
+- Review: Lots of little edits of functions left out and styling issue. Overall good, just missed a couple of things.
