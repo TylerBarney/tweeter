@@ -147,3 +147,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Set up this repo for cloud agent support with an environment install, the Vite dev server, and cloud-specific instructions.
 - Review: Worked well.
+
+## 2026-11-20: terraform/data.tf (new file), terraform/lambda.tf, terraform/outputs.tf, reference/lambda-api.md, reference/architecture.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add DynamoDB tables, a public S3 bucket for profile images, and Lambda permissions so the existing functions can use both.
+- Review: Had to make tweeks to the DynamoDB table set up. But mostly good.

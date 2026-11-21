@@ -116,7 +116,23 @@ resource "aws_lambda_function" "handler" {
   role             = aws_iam_role.lambda.arn
   layers           = [aws_lambda_layer_version.dependencies.arn]
 
-  depends_on = [aws_iam_role_policy_attachment.lambda]
+  environment {
+    variables = {
+      USERS_TABLE             = aws_dynamodb_table.users.name
+      AUTH_TOKENS_TABLE       = aws_dynamodb_table.auth_tokens.name
+      FOLLOWS_TABLE           = aws_dynamodb_table.follows.name
+      FOLLOWS_FOLLOWERS_INDEX = local.followers_index_name
+      STORY_TABLE             = aws_dynamodb_table.story.name
+      FEED_TABLE              = aws_dynamodb_table.feed.name
+      PROFILE_IMAGE_BUCKET    = aws_s3_bucket.profile_images.bucket
+      PROFILE_IMAGE_PREFIX    = local.profile_image_prefix
+    }
+  }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.lambda,
+    aws_iam_role_policy.lambda_data,
+  ]
 
   lifecycle {
     precondition {

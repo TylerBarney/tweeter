@@ -6,7 +6,7 @@ Region `us-east-1`. One edge-optimized REST API named `tweeter-api`, deployed to
 
 Do not create a second copy of any of these.
 
-- Role `tweeter-lambda-role` (`aws_iam_role.lambda`). `lambda.amazonaws.com` can assume it. Attached policies: `AWSLambdaBasicExecutionRole` and `CloudWatchLogsFullAccess`.
+- Role `tweeter-lambda-role` (`aws_iam_role.lambda`). `lambda.amazonaws.com` can assume it. Attached policies: `AWSLambdaBasicExecutionRole` and `CloudWatchLogsFullAccess`. Inline policy `tweeter-lambda-data` (`aws_iam_role_policy.lambda_data`) grants DynamoDB data actions on the tables below and `s3:*` on the profile-image bucket.
 - Layer `tweeter-dependencies` from `tweeter-server/layer.zip`, with `compatible_runtimes = ["nodejs24.x"]`. The zip root is `nodejs/node_modules/` and contains only `tweeter-shared`, `date-fns`, and `uuid`.
 - `tweeter-server/function.zip`, the compiled `tweeter-server/dist` tree. Every function uses this same zip. Terraform does not build either zip.
 - REST API `aws_api_gateway_rest_api.tweeter`, deployment `aws_api_gateway_deployment.dev`, and stage `aws_api_gateway_stage.dev`.
@@ -82,7 +82,29 @@ Each route sets `request_model` and `response_model`. Those names are `aws_api_g
 6. The deployment already depends on the route resources and hashes `local.routes` and the model schemas. A new map entry redeploys the `dev` stage. Do not add a copied method block.
 7. Add an output in `terraform/outputs.tf`: `"${aws_api_gateway_stage.dev.invoke_url}/<path>"`.
 
-Do not add the other operations, S3, DynamoDB, or SQS unless the task asks for them. Do not change a handler's request or response types to fit API Gateway.
+Do not add SQS unless the task asks for it. DynamoDB and the profile-image bucket already exist; do not create a second copy. Do not change a handler's request or response types to fit API Gateway.
+
+## Data stores
+
+Terraform in `terraform/data.tf` creates the tables and the bucket. Server services still return `FakeData`. Every Lambda receives the names in its environment.
+
+Provisioned capacity lives in `local.dynamodb_capacity`. The sum of read capacity and the sum of write capacity, including the followers index, stay at or under 25 so the account stays in the DynamoDB free tier. A check named `dynamodb_free_tier` rejects a plan that goes over. Raise a number only for a short pass-off, then put it back. Do not enable DAX. Do not add CloudWatch alarms for these tables. The free tier allows 8 alarms, and creating or editing a table in the console can recreate them.
+
+`postedAt` on the story and feed tables is a string: 16-digit zero-padded epoch milliseconds, `#`, then the author alias. Example: `0000001732147200000#alex`. String order matches time order, and two authors can post in the same millisecond. Query newest first with `ScanIndexForward` false.
+
+| Table | Resource | Keys | Other item attributes |
+| --- | --- | --- | --- |
+| `tweeter-users` | `aws_dynamodb_table.users` | hash `alias` (S) | `firstName`, `lastName`, `imageUrl`, `passwordHash` |
+| `tweeter-auth-tokens` | `aws_dynamodb_table.auth_tokens` | hash `token` (S) | `alias`, `timestamp` |
+| `tweeter-follows` | `aws_dynamodb_table.follows` | hash `followerAlias` (S), range `followeeAlias` (S). GSI `followers`: hash `followeeAlias`, range `followerAlias`, projection `ALL` | none |
+| `tweeter-story` | `aws_dynamodb_table.story` | hash `alias` (S), range `postedAt` (S) | `timestamp`, `post` |
+| `tweeter-feed` | `aws_dynamodb_table.feed` | hash `alias` (S) of the viewer, range `postedAt` (S) | `timestamp`, `post`, `authorAlias`, `authorFirstName`, `authorLastName`, `authorImageUrl` |
+
+A feed row is written for each follower who follows the author when the status is posted. Unfollow leaves existing feed rows in place.
+
+Profile images use bucket `aws_s3_bucket.profile_images` (`tweeter-profile-images-<account id>`). Object ownership is `BucketOwnerPreferred`, so object ACLs work. Block Public Access blocks nothing. Register writes the object at `image/<fileName>` with ACL `public-read`. The bucket policy allows public `s3:GetObject` on `image/*`. The public URL is `https://<bucket>.s3.us-east-1.amazonaws.com/image/<fileName>`.
+
+Lambda environment variables: `USERS_TABLE`, `AUTH_TOKENS_TABLE`, `FOLLOWS_TABLE`, `FOLLOWS_FOLLOWERS_INDEX`, `STORY_TABLE`, `FEED_TABLE`, `PROFILE_IMAGE_BUCKET`, `PROFILE_IMAGE_PREFIX`.
 
 ## Checks
 
