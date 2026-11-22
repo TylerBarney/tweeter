@@ -15,6 +15,7 @@ The UI calls the deployed API through `ServerFacade` and `ClientCommunicator`. T
 - [reference/requirements.md](reference/requirements.md) — session, status, and follow behavior, plus UI rules
 - [reference/architecture.md](reference/architecture.md) — current client layers, the deployed route, and the target server and network layout
 - [reference/lambda-api.md](reference/lambda-api.md) — how the Lambda and API Gateway are set up, and how to add the next function and route
+- [reference/dynamoDB.md](reference/dynamoDB.md) — DynamoDB table keys, indexes, and item attributes
 
 ## Working in this repo
 

@@ -5,11 +5,11 @@
 locals {
   followers_index_name = "followers"
   dynamodb_capacity = {
-    users           = { read = 1, write = 1 }
-    auth_tokens     = { read = 1, write = 1 }
-    follows         = { read = 1, write = 1 }
-    followers_index = { read = 1, write = 1 }
-    story           = { read = 1, write = 1 }
+    users           = { read = 2, write = 2 }
+    auth_tokens     = { read = 2, write = 2 }
+    follows         = { read = 2, write = 1 }
+    followers_index = { read = 2, write = 1 }
+    story           = { read = 2, write = 2 }
     feed            = { read = 5, write = 10 }
   }
   dynamodb_read_total  = sum([for capacity in local.dynamodb_capacity : capacity.read])
@@ -54,6 +54,11 @@ resource "aws_dynamodb_table" "auth_tokens" {
     name = "token"
     type = "S"
   }
+
+  ttl {
+    attribute_name = "expiresAt"
+    enabled        = true
+  }
 }
 
 resource "aws_dynamodb_table" "follows" {
@@ -97,7 +102,7 @@ resource "aws_dynamodb_table" "story" {
   name         = "tweeter-story"
   billing_mode = "PROVISIONED"
   hash_key     = "alias"
-  range_key    = "postedAt"
+  range_key    = "timestamp"
 
   read_capacity  = local.dynamodb_capacity.story.read
   write_capacity = local.dynamodb_capacity.story.write
@@ -108,8 +113,8 @@ resource "aws_dynamodb_table" "story" {
   }
 
   attribute {
-    name = "postedAt"
-    type = "S"
+    name = "timestamp"
+    type = "N"
   }
 }
 

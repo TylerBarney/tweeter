@@ -90,17 +90,7 @@ Terraform in `terraform/data.tf` creates the tables and the bucket. Server servi
 
 Provisioned capacity lives in `local.dynamodb_capacity`. The sum of read capacity and the sum of write capacity, including the followers index, stay at or under 25 so the account stays in the DynamoDB free tier. A check named `dynamodb_free_tier` rejects a plan that goes over. Raise a number only for a short pass-off, then put it back. Do not enable DAX. Do not add CloudWatch alarms for these tables. The free tier allows 8 alarms, and creating or editing a table in the console can recreate them.
 
-`postedAt` on the story and feed tables is a string: 16-digit zero-padded epoch milliseconds, `#`, then the author alias. Example: `0000001732147200000#alex`. String order matches time order, and two authors can post in the same millisecond. Query newest first with `ScanIndexForward` false.
-
-| Table | Resource | Keys | Other item attributes |
-| --- | --- | --- | --- |
-| `tweeter-users` | `aws_dynamodb_table.users` | hash `alias` (S) | `firstName`, `lastName`, `imageUrl`, `passwordHash` |
-| `tweeter-auth-tokens` | `aws_dynamodb_table.auth_tokens` | hash `token` (S) | `alias`, `timestamp` |
-| `tweeter-follows` | `aws_dynamodb_table.follows` | hash `followerAlias` (S), range `followeeAlias` (S). GSI `followers`: hash `followeeAlias`, range `followerAlias`, projection `ALL` | none |
-| `tweeter-story` | `aws_dynamodb_table.story` | hash `alias` (S), range `postedAt` (S) | `timestamp`, `post` |
-| `tweeter-feed` | `aws_dynamodb_table.feed` | hash `alias` (S) of the viewer, range `postedAt` (S) | `timestamp`, `post`, `authorAlias`, `authorFirstName`, `authorLastName`, `authorImageUrl` |
-
-A feed row is written for each follower who follows the author when the status is posted. Unfollow leaves existing feed rows in place.
+Table names, keys, the followers index, and item attributes are in [dynamoDB.md](dynamoDB.md).
 
 Profile images use bucket `aws_s3_bucket.profile_images` (`tweeter-profile-images-<account id>`). Object ownership is `BucketOwnerPreferred`, so object ACLs work. Block Public Access blocks nothing. Register writes the object at `image/<fileName>` with ACL `public-read`. The bucket policy allows public `s3:GetObject` on `image/*`. The public URL is `https://<bucket>.s3.us-east-1.amazonaws.com/image/<fileName>`.
 

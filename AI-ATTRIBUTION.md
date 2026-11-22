@@ -153,3 +153,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Add DynamoDB tables, a public S3 bucket for profile images, and Lambda permissions so the existing functions can use both.
 - Review: Had to make tweeks to the DynamoDB table set up. But mostly good.
+
+## 2026-11-22: terraform/data.tf, reference/dynamoDB.md (new file), reference/lambda-api.md, reference/architecture.md, AGENTS.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Revise the DynamoDB table keys to match the class design, and record the schemas in reference/dynamoDB.md instead of lambda-api.md and architecture.md.
+- Review: Had to make a change or two to the suggested table design. Also had to test deployment worked.
