@@ -6,6 +6,8 @@ import { FollowDao } from "../FollowDao";
 import { DynamoDao } from "./DynamoDao";
 import { getDocumentClient, requireEnv } from "./documentClient";
 
+const FOLLOWER_ALIAS_PAGE_SIZE = 100;
+
 type TransactItem = NonNullable<TransactWriteCommandInput["TransactItems"]>[number];
 
 export class DynamoFollowDao extends DynamoDao implements FollowDao {
@@ -32,6 +34,26 @@ export class DynamoFollowDao extends DynamoDao implements FollowDao {
       "followerAlias",
       "followeeAlias",
     );
+  }
+
+  public async getFollowerAliases(alias: string): Promise<string[]> {
+    const aliases: string[] = [];
+    await this.eachQueryPage(
+      {
+        tableName: this.followsTable,
+        indexName: this.followersIndex,
+        partitionKey: "followeeAlias",
+        partitionValue: alias,
+        sortKey: "followerAlias",
+        limit: FOLLOWER_ALIAS_PAGE_SIZE,
+        mapItem: (item) =>
+          typeof item.followerAlias === "string" ? item.followerAlias : "",
+      },
+      async (page) => {
+        aliases.push(...page.filter((follower) => follower.length > 0));
+      },
+    );
+    return aliases;
   }
 
   public getFollowers(
@@ -97,25 +119,14 @@ export class DynamoFollowDao extends DynamoDao implements FollowDao {
       startSortValue: lastUser === null ? undefined : lastUser.alias,
       mapItem: (item) => String(item[sortKey]),
     });
-    const users = await this.usersFor(aliases.values);
-    return new DataPage(users, aliases.hasMorePages);
-  }
-
-  private async usersFor(aliases: string[]): Promise<User[]> {
-    if (aliases.length === 0) {
-      return [];
-    }
-
-    const keys = [...new Set(aliases)].map((alias) => ({ alias }));
-    const items = await this.batchGet(this.usersTable, keys);
-    const users = new Map(
-      items.map((item) => [String(item.alias), this.toUser(item)]),
+    const users = await this.usersByAlias(this.usersTable, aliases.values);
+    return new DataPage(
+      aliases.values.flatMap((alias) => {
+        const user = users.get(alias);
+        return user === undefined ? [] : [user];
+      }),
+      aliases.hasMorePages,
     );
-
-    return aliases.flatMap((alias) => {
-      const user = users.get(alias);
-      return user === undefined ? [] : [user];
-    });
   }
 
   private async count(alias: string, attribute: string): Promise<number> {

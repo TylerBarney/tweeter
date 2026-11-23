@@ -13,5 +13,8 @@ export class FakeStatusDao extends FakeDao implements StatusDao {
     return this.page(this.data.getPageOfStatuses(lastItem, pageSize));
   }
 
-  public async put(_status: Status): Promise<void> {}
+  public async put(
+    _status: Status,
+    _recipientAliases?: string[],
+  ): Promise<void> {}
 }

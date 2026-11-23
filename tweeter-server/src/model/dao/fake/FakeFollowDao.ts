@@ -21,6 +21,10 @@ export class FakeFollowDao extends FakeDao implements FollowDao {
     return this.pageOfUsers(alias, pageSize, lastUser);
   }
 
+  public async getFollowerAliases(_alias: string): Promise<string[]> {
+    return [];
+  }
+
   public async isFollower(
     _followerAlias: string,
     _followeeAlias: string,

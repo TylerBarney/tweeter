@@ -2,6 +2,7 @@
 import { User } from "tweeter-shared";
 import {
   BatchGetCommand,
+  BatchWriteCommand,
   DeleteCommand,
   DynamoDBDocumentClient,
   GetCommand,
@@ -13,6 +14,8 @@ import { DataPage } from "../DataPage";
 
 export type DynamoItem = Record<string, unknown>;
 
+const BATCH_WRITE_LIMIT = 25;
+
 type QueryPageOptions<T> = {
   tableName: string;
   indexName?: string;
@@ -20,7 +23,7 @@ type QueryPageOptions<T> = {
   partitionValue: string;
   sortKey: string;
   limit: number;
-  startSortValue?: string;
+  startSortValue?: string | number;
   scanIndexForward?: boolean;
   mapItem: (item: DynamoItem) => T;
 };
@@ -31,6 +34,29 @@ export abstract class DynamoDao {
   protected async queryPage<T>(
     options: QueryPageOptions<T>,
   ): Promise<DataPage<T>> {
+    const page = await this.sendQuery(options);
+    return new DataPage(page.values, page.lastKey !== undefined);
+  }
+
+  protected async eachQueryPage<T>(
+    options: QueryPageOptions<T>,
+    visit: (values: T[]) => Promise<void>,
+  ): Promise<void> {
+    let startKey: Record<string, unknown> | undefined;
+    do {
+      const page = await this.sendQuery(options, startKey);
+      if (page.values.length > 0) {
+        await visit(page.values);
+      }
+      options = { ...options, startSortValue: undefined };
+      startKey = page.lastKey;
+    } while (startKey !== undefined);
+  }
+
+  private async sendQuery<T>(
+    options: QueryPageOptions<T>,
+    exclusiveStartKey?: Record<string, unknown>,
+  ): Promise<{ values: T[]; lastKey?: Record<string, unknown> }> {
     const result = await this.client.send(
       new QueryCommand({
         TableName: options.tableName,
@@ -42,21 +68,36 @@ export abstract class DynamoDao {
         ExpressionAttributeValues: { ":pk": options.partitionValue },
         Limit: options.limit,
         ScanIndexForward: options.scanIndexForward ?? true,
-        ...(options.startSortValue === undefined
-          ? {}
-          : {
-              ExclusiveStartKey: {
-                [options.partitionKey]: options.partitionValue,
-                [options.sortKey]: options.startSortValue,
-              },
-            }),
+        ...this.startKey(options, exclusiveStartKey),
       }),
     );
 
-    const values = (result.Items ?? []).map((item) =>
-      options.mapItem(item as DynamoItem),
-    );
-    return new DataPage(values, result.LastEvaluatedKey !== undefined);
+    return {
+      values: (result.Items ?? []).map((item) =>
+        options.mapItem(item as DynamoItem),
+      ),
+      lastKey: result.LastEvaluatedKey as Record<string, unknown> | undefined,
+    };
+  }
+
+  private startKey<T>(
+    options: QueryPageOptions<T>,
+    exclusiveStartKey?: Record<string, unknown>,
+  ): { ExclusiveStartKey?: Record<string, unknown> } {
+    if (exclusiveStartKey !== undefined) {
+      return { ExclusiveStartKey: exclusiveStartKey };
+    }
+
+    if (options.startSortValue === undefined) {
+      return {};
+    }
+
+    return {
+      ExclusiveStartKey: {
+        [options.partitionKey]: options.partitionValue,
+        [options.sortKey]: options.startSortValue,
+      },
+    };
   }
 
   protected async getItem(
@@ -169,6 +210,50 @@ export abstract class DynamoDao {
 
     const name = (error as { name?: unknown }).name;
     return typeof name === "string" ? name : undefined;
+  }
+
+  protected async usersByAlias(
+    tableName: string,
+    aliases: string[],
+  ): Promise<Map<string, User>> {
+    const unique = [...new Set(aliases)];
+    if (unique.length === 0) {
+      return new Map();
+    }
+
+    const items =
+      unique.length === 1
+        ? [await this.getItem(tableName, { alias: unique[0] })].filter(
+            (item): item is DynamoItem => item !== undefined,
+          )
+        : await this.batchGet(
+            tableName,
+            unique.map((alias) => ({ alias })),
+          );
+
+    return new Map(items.map((item) => [String(item.alias), this.toUser(item)]));
+  }
+
+  protected async batchWrite(
+    tableName: string,
+    items: DynamoItem[],
+  ): Promise<void> {
+    let pending = items;
+    while (pending.length > 0) {
+      let request = pending.slice(0, BATCH_WRITE_LIMIT).map((item) => ({
+        PutRequest: { Item: item },
+      }));
+      pending = pending.slice(BATCH_WRITE_LIMIT);
+
+      while (request.length > 0) {
+        const result = await this.client.send(
+          new BatchWriteCommand({
+            RequestItems: { [tableName]: request },
+          }),
+        );
+        request = (result.UnprocessedItems?.[tableName] ?? []) as typeof request;
+      }
+    }
   }
 
   protected async batchGet(

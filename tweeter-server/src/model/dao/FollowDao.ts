@@ -15,6 +15,8 @@ export interface FollowDao {
     lastUser: User | null,
   ): Promise<DataPage<User>>;
 
+  getFollowerAliases(alias: string): Promise<string[]>;
+
   isFollower(followerAlias: string, followeeAlias: string): Promise<boolean>;
 
   follow(followerAlias: string, followeeAlias: string): Promise<void>;

@@ -1,17 +1,26 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import { Status, StatusDto } from "tweeter-shared";
-import { DataPage } from "../dao/DataPage";
 import { StatusDao } from "../dao/StatusDao";
 import { Service } from "./Service";
+import { FollowDao } from "../dao/FollowDao";
 
 export class StatusService extends Service {
+  private feedDao: StatusDao;
+  private storyDao: StatusDao;
+  private followDao: FollowDao;
+  public constructor() {
+    super();
+    this.feedDao = this.factory.feedDao;
+    this.storyDao = this.factory.storyDao;
+    this.followDao = this.factory.followDao;
+  }
   public loadMoreStoryItems(
     token: string,
     userAlias: string,
     pageSize: number,
     lastItem: StatusDto | null,
   ): Promise<[StatusDto[], boolean]> {
-    return this.loadStatuses(this.factory.storyDao, userAlias, pageSize, lastItem);
+    return this.loadStatuses(this.storyDao, userAlias, pageSize, lastItem);
   }
 
   public loadMoreFeedItems(
@@ -20,7 +29,7 @@ export class StatusService extends Service {
     pageSize: number,
     lastItem: StatusDto | null,
   ): Promise<[StatusDto[], boolean]> {
-    return this.loadStatuses(this.factory.feedDao, userAlias, pageSize, lastItem);
+    return this.loadStatuses(this.feedDao, userAlias, pageSize, lastItem);
   }
 
   public async postStatus(token: string, newStatus: StatusDto): Promise<void> {
@@ -30,8 +39,11 @@ export class StatusService extends Service {
       return;
     }
 
-    await this.factory.storyDao.put(status);
-    await this.factory.feedDao.put(status);
+    await this.storyDao.put(status);
+    const followers = await this.followDao.getFollowerAliases(
+      status.user.alias,
+    );
+    await this.feedDao.put(status, followers);
   }
 
   private loadStatuses(

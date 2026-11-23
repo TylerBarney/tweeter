@@ -9,5 +9,5 @@ export interface StatusDao {
     lastItem: Status | null,
   ): Promise<DataPage<Status>>;
 
-  put(status: Status): Promise<void>;
+  put(status: Status, recipientAliases?: string[]): Promise<void>;
 }
