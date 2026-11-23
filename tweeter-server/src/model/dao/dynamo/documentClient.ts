@@ -1,18 +1,13 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { lazy } from "./lazy";
 
-let documentClient: DynamoDBDocumentClient | undefined;
-
-export function getDocumentClient(): DynamoDBDocumentClient {
-  if (documentClient === undefined) {
-    documentClient = DynamoDBDocumentClient.from(new DynamoDBClient({}), {
-      marshallOptions: { removeUndefinedValues: true },
-    });
-  }
-
-  return documentClient;
-}
+export const getDocumentClient = lazy(() =>
+  DynamoDBDocumentClient.from(new DynamoDBClient({}), {
+    marshallOptions: { removeUndefinedValues: true },
+  }),
+);
 
 export function requireEnv(name: string): string {
   const value = process.env[name];

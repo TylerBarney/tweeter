@@ -4,7 +4,7 @@ set -euo pipefail
 SERVER="$(cd "$(dirname "$0")/.." && pwd)"
 SHARED="$(cd "$SERVER/../tweeter-shared" && pwd)"
 DIRECT_PACKAGES=(tweeter-shared date-fns uuid)
-SDK_PACKAGES=(@aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb)
+SDK_PACKAGES=(@aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb @aws-sdk/client-s3)
 
 echo "Building tweeter-shared"
 cd "$SHARED"

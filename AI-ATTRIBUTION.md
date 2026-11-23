@@ -201,3 +201,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Add a DynamoDB UserDao that loads a user by alias and registers a new user when the alias is free. Password hashing is left for a later step.
 - Review: Implemented password hashing at first so I had to remove it.
+
+## 2026-11-23: tweeter-server/src/model/dao/dynamo/S3ImageDao.ts (new file), tweeter-server/src/model/dao/dynamo/lazy.ts (new file), tweeter-server/src/model/dao/dynamo/documentClient.ts, tweeter-server/package.json, tweeter-server/package-lock.json, tweeter-server/scripts/package-lambda.sh, reference/lambda-api.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add an S3 ImageDao in the Dynamo package that stores a public profile image and returns its URL.
+- Review: Had to fix the error handling for putting an image.

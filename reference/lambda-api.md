@@ -7,7 +7,7 @@ Region `us-east-1`. One edge-optimized REST API named `tweeter-api`, deployed to
 Do not create a second copy of any of these.
 
 - Role `tweeter-lambda-role` (`aws_iam_role.lambda`). `lambda.amazonaws.com` can assume it. Attached policies: `AWSLambdaBasicExecutionRole` and `CloudWatchLogsFullAccess`. Inline policy `tweeter-lambda-data` (`aws_iam_role_policy.lambda_data`) grants DynamoDB data actions on the tables below and `s3:*` on the profile-image bucket.
-- Layer `tweeter-dependencies` from `tweeter-server/layer.zip`, with `compatible_runtimes = ["nodejs24.x"]`. The zip root is `nodejs/node_modules/` and contains `tweeter-shared`, `date-fns`, `uuid`, `@aws-sdk/client-dynamodb`, `@aws-sdk/lib-dynamodb`, and the packages those depend on.
+- Layer `tweeter-dependencies` from `tweeter-server/layer.zip`, with `compatible_runtimes = ["nodejs24.x"]`. The zip root is `nodejs/node_modules/` and contains `tweeter-shared`, `date-fns`, `uuid`, `@aws-sdk/client-dynamodb`, `@aws-sdk/lib-dynamodb`, `@aws-sdk/client-s3`, and the packages those depend on.
 - `tweeter-server/function.zip`, the compiled `tweeter-server/dist` tree. Every function uses this same zip. Terraform does not build either zip.
 - REST API `aws_api_gateway_rest_api.tweeter`, deployment `aws_api_gateway_deployment.dev`, and stage `aws_api_gateway_stage.dev`.
 
