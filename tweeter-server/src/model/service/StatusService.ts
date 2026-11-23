@@ -1,44 +1,48 @@
 // AI-assisted: see AI-ATTRIBUTION.md
-import { FakeData, Status, StatusDto } from "tweeter-shared";
+import { Status, StatusDto } from "tweeter-shared";
+import { DataPage } from "../dao/DataPage";
+import { StatusDao } from "../dao/StatusDao";
 import { Service } from "./Service";
 
-export class StatusService implements Service {
-  public async loadMoreStoryItems(
+export class StatusService extends Service {
+  public loadMoreStoryItems(
     token: string,
     userAlias: string,
     pageSize: number,
     lastItem: StatusDto | null,
   ): Promise<[StatusDto[], boolean]> {
-    // TODO: Replace with the result of calling server
-    return await this.getFakeData(lastItem, pageSize);
+    return this.loadStatuses(this.factory.storyDao, userAlias, pageSize, lastItem);
   }
 
-  public async loadMoreFeedItems(
+  public loadMoreFeedItems(
     token: string,
     userAlias: string,
     pageSize: number,
     lastItem: StatusDto | null,
   ): Promise<[StatusDto[], boolean]> {
-    // TODO: Replace with the result of calling server
-    return await this.getFakeData(lastItem, pageSize);
-  }
-
-  private getFakeData(
-    lastItem: StatusDto | null,
-    pageSize: number,
-  ): [StatusDto[], boolean] {
-    const [items, hasMore] = FakeData.instance.getPageOfStatuses(
-      Status.fromDto(lastItem),
-      pageSize,
-    );
-    const dtos: StatusDto[] = items.map((status) => status.dto);
-    return [dtos, hasMore];
+    return this.loadStatuses(this.factory.feedDao, userAlias, pageSize, lastItem);
   }
 
   public async postStatus(token: string, newStatus: StatusDto): Promise<void> {
-    // Pause so we can see the logging out message. Remove when connected to the server
-    await new Promise((f) => setTimeout(f, 2000));
+    await this.pause(2000);
+    const status = Status.fromDto(newStatus);
+    if (status === null) {
+      return;
+    }
 
-    // TODO: Call the server to post the status
+    await this.factory.storyDao.put(status);
+    await this.factory.feedDao.put(status);
+  }
+
+  private loadStatuses(
+    dao: StatusDao,
+    userAlias: string,
+    pageSize: number,
+    lastItem: StatusDto | null,
+  ): Promise<[StatusDto[], boolean]> {
+    return this.loadPage(
+      () => dao.getPage(userAlias, pageSize, Status.fromDto(lastItem)),
+      (status) => status.dto,
+    );
   }
 }

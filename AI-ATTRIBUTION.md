@@ -176,4 +176,10 @@
 
 - Tool: Cursor (Grok 4.7)
 - Task: Add the UserDao, ImageDao, and AuthTokenDao interfaces, and route UserService through them for lookup, registration, login, and logout.
+- Review: Again had to fix the DaoFactory calls on the UserService.
+
+## 2026-11-22: tweeter-server/src/model/dao/StatusDao.ts (new file), tweeter-server/src/model/service/StatusService.ts, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add the StatusDao interface and route StatusService through it for story pages, feed pages, and posting a status.
 - Review: TODO
