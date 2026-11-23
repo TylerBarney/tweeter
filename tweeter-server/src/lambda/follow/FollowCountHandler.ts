@@ -4,12 +4,14 @@ import {
   FollowCountResponse,
   UserDto,
 } from "tweeter-shared";
+import { authorizeRequest } from "../authorizeRequest";
 
 type CountLoader = (token: string, user: UserDto) => Promise<number>;
 
 export const createFollowCountHandler =
   (loadCount: CountLoader) =>
   async (request: FollowRequest): Promise<FollowCountResponse> => {
+    await authorizeRequest(request);
     const count = await loadCount(request.token, request.user);
     return {
       success: true,

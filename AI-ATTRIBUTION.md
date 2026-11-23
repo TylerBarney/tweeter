@@ -225,3 +225,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Add a Dynamo DAO factory that creates each DAO on first use, and make it the default factory.
 - Review: All looked good.
+
+## 2026-11-23: tweeter-server/src/model/service/AuthorizationService.ts (new file), tweeter-server/src/lambda/authorizeRequest.ts (new file), tweeter-server/src/model/dao/dynamo/DynamoUserDao.ts, tweeter-server/src/model/service/UserService.ts, tweeter-server/src/lambda/PagedItemHandler.ts, tweeter-server/src/lambda/follow/FollowHandler.ts, tweeter-server/src/lambda/follow/FollowCountHandler.ts, tweeter-server/src/lambda/follow/GetFollowerStatusLambda.ts, tweeter-server/src/lambda/user/GetUserLambda.ts, tweeter-server/src/lambda/user/LogoutLambda.ts, tweeter-server/src/lambda/status/PostStatusLambda.ts, tweeter-server/package.json, tweeter-server/package-lock.json, tweeter-server/scripts/package-lambda.sh, reference/lambda-api.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Hash passwords with bcryptjs, and require a valid session in every Lambda that receives a token.
+- Review: Moved password hashing into the service, rather than the dao because I want it to live in one place.

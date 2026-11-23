@@ -1,11 +1,8 @@
 // AI-assisted: see AI-ATTRIBUTION.md
-import bcrypt from "bcryptjs";
 import { User } from "tweeter-shared";
 import { UserDao } from "../UserDao";
 import { DynamoDao } from "./DynamoDao";
 import { getDocumentClient, requireEnv } from "./documentClient";
-
-const PASSWORD_ROUNDS = 10;
 
 export class DynamoUserDao extends DynamoDao implements UserDao {
   private readonly usersTable: string;
@@ -20,25 +17,16 @@ export class DynamoUserDao extends DynamoDao implements UserDao {
     return item === undefined ? null : this.toUser(item);
   }
 
-  public async authenticate(
-    alias: string,
-    password: string,
-  ): Promise<User | null> {
+  public async findPasswordHash(alias: string): Promise<string | null> {
     const item = await this.getItem(this.usersTable, { alias });
-    const passwordHash = item?.passwordHash;
-    if (item === undefined || typeof passwordHash !== "string") {
-      return null;
-    }
-
-    const matches = await bcrypt.compare(password, passwordHash);
-    return matches ? this.toUser(item) : null;
+    return typeof item?.passwordHash === "string" ? item.passwordHash : null;
   }
 
   public async register(
     firstName: string,
     lastName: string,
     alias: string,
-    password: string,
+    passwordHash: string,
     imageUrl: string,
   ): Promise<User | null> {
     const created = await this.putItem(
@@ -48,7 +36,7 @@ export class DynamoUserDao extends DynamoDao implements UserDao {
         firstName,
         lastName,
         imageUrl,
-        passwordHash: await bcrypt.hash(password, PASSWORD_ROUNDS),
+        passwordHash,
         followerCount: 0,
         followeeCount: 0,
       },
