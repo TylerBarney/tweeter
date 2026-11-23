@@ -188,4 +188,10 @@
 
 - Tool: Cursor (Grok 4.7)
 - Task: Add the fake DAO implementations and the default factory that supplies them, and record in the reference docs that services read FakeData through those DAOs.
-- Review: TODO
+- Review: All looked good. Ran the tests and they still pass
+
+## 2026-11-22: tweeter-server/src/model/dao/dynamo/documentClient.ts (new file), tweeter-server/src/model/dao/dynamo/DynamoDao.ts (new file), tweeter-server/src/model/dao/dynamo/DynamoFollowDao.ts (new file), tweeter-server/package.json, tweeter-server/package-lock.json, tweeter-server/scripts/package-lambda.sh, reference/lambda-api.md, tweeter-server/tsconfig.json, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add a DynamoDB FollowDao that pages follows, loads the matching users, and updates follow counts in one transaction. Include the DynamoDB SDK in the Lambda layer.
+- Review: Had to add query page options type for easier readability
