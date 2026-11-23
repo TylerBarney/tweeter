@@ -261,3 +261,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Keep Register disabled until the profile image bytes are loaded, and reject an empty image before uploading it.
 - Review: Looks good.
+
+## 2026-11-23: tweeter-server/src/model/apiError.ts (new file), tweeter-server/src/lambda/withApiErrors.ts (new file), tweeter-server/src/lambda/user/AuthenticationHandler.ts, tweeter-server/src/lambda/PagedItemHandler.ts, tweeter-server/src/lambda/follow/FollowHandler.ts, tweeter-server/src/lambda/follow/FollowCountHandler.ts, tweeter-server/src/lambda/follow/GetFollowerStatusLambda.ts, tweeter-server/src/lambda/status/PostStatusLambda.ts, tweeter-server/src/lambda/user/GetUserLambda.ts, tweeter-server/src/lambda/user/LogoutLambda.ts, tweeter-server/src/model/service/AuthorizationService.ts, tweeter-server/src/model/service/FollowService.ts, tweeter-server/src/model/service/UserService.ts, tweeter-server/src/model/dao/dynamo/S3ImageDao.ts, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Wrap every Lambda handler so request errors stay visible and other failures are logged and returned as one server error. Reject a taken alias and blank registration fields before the profile image is uploaded.
+- Review: Had to move around some of the handler logic. Had to change some of the errors thrown.

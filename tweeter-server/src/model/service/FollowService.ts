@@ -1,5 +1,6 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import { User, UserDto } from "tweeter-shared";
+import { badRequest } from "../apiError";
 import { DataPage } from "../dao/DataPage";
 import { FollowDao, FollowWriteResult } from "../dao/FollowDao";
 import { Service } from "./Service";
@@ -101,7 +102,7 @@ export class FollowService extends Service {
     ) => Promise<FollowWriteResult>,
   ): Promise<[followerCount: number, followeeCount: number]> {
     if (followerAlias === user.alias) {
-      throw new Error("[Bad Request] A user cannot follow themselves");
+      badRequest("A user cannot follow themselves");
     }
 
     await this.pause(2000);
@@ -115,11 +116,11 @@ export class FollowService extends Service {
       case "ok":
         return;
       case "already-following":
-        throw new Error("[Bad Request] Already following this user");
+        badRequest("Already following this user");
       case "not-following":
-        throw new Error("[Bad Request] Not following this user");
+        badRequest("Not following this user");
       case "missing-user":
-        throw new Error("[Bad Request] User not found");
+        badRequest("User not found");
     }
   }
 

@@ -5,6 +5,7 @@ import {
   LoginRequest,
   UserDto,
 } from "tweeter-shared";
+import { withApiErrors } from "../withApiErrors";
 
 type Authenticator<T extends LoginRequest> = (
   request: T,
@@ -12,12 +13,14 @@ type Authenticator<T extends LoginRequest> = (
 
 export const createAuthenticationHandler =
   <T extends LoginRequest>(authenticate: Authenticator<T>) =>
-  async (request: T): Promise<AuthenticationResponse> => {
-    const [user, authToken] = await authenticate(request);
-    return {
-      success: true,
-      message: null,
-      user,
-      authToken,
-    };
-  };
+  withApiErrors(
+    async (request: T): Promise<AuthenticationResponse> => {
+      const [user, authToken] = await authenticate(request);
+      return {
+        success: true,
+        message: null,
+        user,
+        authToken,
+      };
+    },
+  );

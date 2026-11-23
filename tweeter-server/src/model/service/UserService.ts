@@ -1,5 +1,6 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import { AuthTokenDto, UserDto } from "tweeter-shared";
+import { badRequest } from "../apiError";
 import { Service } from "./Service";
 import { UserDao } from "../dao/UserDao";
 import { ImageDao } from "../dao/ImageDao";
@@ -28,9 +29,21 @@ export class UserService extends Service {
     userImageBytes: string,
     imageFileExtension: string,
   ): Promise<[UserDto, AuthTokenDto]> {
+    if (
+      [firstName, lastName, alias, password].some(
+        (value) => typeof value !== "string" || value.trim().length === 0,
+      )
+    ) {
+      badRequest("First name, last name, alias, and password are required");
+    }
+
     const image = Buffer.from(userImageBytes, "base64");
-    if (image.length === 0 || !imageFileExtension.trim()) {
-      throw new Error("[Bad Request] A profile image is required");
+    if (
+      image.length === 0 ||
+      typeof imageFileExtension !== "string" ||
+      imageFileExtension.trim().length === 0
+    ) {
+      badRequest("A profile image is required");
     }
 
     const imageUrl = await this.imageDao.putImage(

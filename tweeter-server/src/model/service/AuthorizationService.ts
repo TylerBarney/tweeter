@@ -1,6 +1,7 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import bcrypt from "bcryptjs";
 import { AuthToken, AuthTokenDto, User, UserDto } from "tweeter-shared";
+import { badRequest } from "../apiError";
 import { AuthSession, AuthTokenDao } from "../dao/AuthTokenDao";
 import { Service } from "./Service";
 import { UserDao } from "../dao/UserDao";
@@ -20,13 +21,13 @@ export class AuthorizationService extends Service {
     alias: string,
     password: string,
   ): Promise<[UserDto, AuthTokenDto]> {
-    if (!alias.trim()) {
-      throw new Error("[Bad Request] alias is required");
+    if (typeof alias !== "string" || alias.trim().length === 0) {
+      badRequest("alias is required");
     }
 
     const user = await this.authenticate(alias, password);
     if (user === null) {
-      throw new Error("[Bad Request] Invalid alias or password");
+      badRequest("Invalid alias or password");
     }
 
     return this.sessionFor(user);
@@ -47,7 +48,7 @@ export class AuthorizationService extends Service {
       imageUrl,
     );
     if (user === null) {
-      throw new Error("[Bad Request] Invalid registration");
+      badRequest("User already registered");
     }
 
     return this.sessionFor(user);
@@ -56,7 +57,7 @@ export class AuthorizationService extends Service {
   public async authorize(token: string): Promise<AuthSession> {
     const session = await this.currentSession(token);
     if (session === null) {
-      throw new Error("[Bad Request] User is not authorized");
+      badRequest("User is not authorized");
     }
 
     return this.renew(token, session.alias);
@@ -68,7 +69,7 @@ export class AuthorizationService extends Service {
   ): Promise<AuthSession> {
     const session = await this.authorize(token);
     if (session.alias !== alias) {
-      throw new Error("[Bad Request] User is not authorized");
+      badRequest("User is not authorized");
     }
 
     return session;
@@ -107,7 +108,7 @@ export class AuthorizationService extends Service {
   }
 
   private async currentSession(token: string): Promise<AuthSession | null> {
-    if (!token.trim()) {
+    if (typeof token !== "string" || token.trim().length === 0) {
       return null;
     }
 
@@ -135,7 +136,7 @@ export class AuthorizationService extends Service {
       this.expiresAt(timestamp),
     );
     if (!renewed) {
-      throw new Error("[Bad Request] User is not authorized");
+      badRequest("User is not authorized");
     }
 
     return {

@@ -30,21 +30,17 @@ export class S3ImageDao implements ImageDao {
     imageStringBase64Encoded: string,
   ): Promise<string> {
     const key = `${this.prefix}${fileName}`;
-    try {
-      await this.client.send(
-        new PutObjectCommand({
-          Bucket: this.bucket,
-          Key: key,
-          Body: Buffer.from(imageStringBase64Encoded, "base64"),
-          ACL: "public-read",
-          ContentType: this.contentType(fileName),
-        }),
-      );
+    await this.client.send(
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: key,
+        Body: Buffer.from(imageStringBase64Encoded, "base64"),
+        ACL: "public-read",
+        ContentType: this.contentType(fileName),
+      }),
+    );
 
-      return `https://${this.bucket}.s3.${this.region}.amazonaws.com/${key}`;
-    } catch (error) {
-      throw new Error("s3 put image failed with: " + error);
-    }
+    return `https://${this.bucket}.s3.${this.region}.amazonaws.com/${key}`;
   }
 
   private contentType(fileName: string): string {
