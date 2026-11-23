@@ -170,4 +170,10 @@
 
 - Tool: Cursor (Grok 4.7)
 - Task: Add the DaoFactory and route FollowService through the shared Service base so follow operations receive their DAOs from the factory.
+- Review: Had to fix the DaoFactory calls on the FollowService.
+
+## 2026-11-22: tweeter-server/src/model/dao/UserDao.ts (new file), tweeter-server/src/model/dao/ImageDao.ts (new file), tweeter-server/src/model/dao/AuthTokenDao.ts (new file), tweeter-server/src/model/service/UserService.ts, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add the UserDao, ImageDao, and AuthTokenDao interfaces, and route UserService through them for lookup, registration, login, and logout.
 - Review: TODO

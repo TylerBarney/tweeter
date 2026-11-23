@@ -1,11 +1,22 @@
 // AI-assisted: see AI-ATTRIBUTION.md
-import { AuthTokenDto, FakeData, UserDto } from "tweeter-shared";
+import { AuthTokenDto, User, UserDto } from "tweeter-shared";
 import { Service } from "./Service";
+import { UserDao } from "../dao/UserDao";
+import { ImageDao } from "../dao/ImageDao";
+import { AuthTokenDao } from "../dao/AuthTokenDao";
 
-export class UserService implements Service {
+export class UserService extends Service {
+  private userDao: UserDao;
+  private imageDao: ImageDao;
+  private authTokenDao: AuthTokenDao;
+  public constructor() {
+    super();
+    this.userDao = this.factory.userDao;
+    this.imageDao = this.factory.imageDao;
+    this.authTokenDao = this.factory.authTokenDao;
+  }
   public async getUser(token: string, alias: string): Promise<UserDto | null> {
-    // TODO: Replace with the result of calling server
-    const user = FakeData.instance.findUserByAlias(alias);
+    const user = await this.userDao.findByAlias(alias);
     return user === null ? null : user.dto;
   }
 
@@ -17,8 +28,8 @@ export class UserService implements Service {
       throw new Error("[Bad Request] alias is required");
     }
 
-    // TODO: Replace with the result of calling the server
-    return this.firstUserAndToken("Invalid alias or password");
+    const user = await this.userDao.authenticate(alias, password);
+    return this.userAndToken(user, "Invalid alias or password");
   }
 
   public async register(
@@ -29,22 +40,34 @@ export class UserService implements Service {
     userImageBytes: string,
     imageFileExtension: string,
   ): Promise<[UserDto, AuthTokenDto]> {
-    // TODO: Replace with the result of calling the server
-    return this.firstUserAndToken("Invalid registration");
+    const imageUrl = await this.imageDao.putImage(
+      `${alias}.${imageFileExtension}`,
+      userImageBytes,
+    );
+    const user = await this.factory.userDao.register(
+      firstName,
+      lastName,
+      alias,
+      password,
+      imageUrl,
+    );
+    return this.userAndToken(user, "Invalid registration");
   }
 
-  private firstUserAndToken(failureMessage: string): [UserDto, AuthTokenDto] {
-    const user = FakeData.instance.firstUser;
+  public async logout(token: string): Promise<void> {
+    await this.pause(1000);
+    await this.authTokenDao.delete(token);
+  }
 
+  private async userAndToken(
+    user: User | null,
+    failureMessage: string,
+  ): Promise<[UserDto, AuthTokenDto]> {
     if (user === null) {
       throw new Error(failureMessage);
     }
 
-    return [user.dto, FakeData.instance.authToken.dto];
-  }
-
-  public async logout(token: string): Promise<void> {
-    // Pause so we can see the logging out message. Delete when the call to the server is implemented.
-    await new Promise((res) => setTimeout(res, 1000));
+    const authToken = await this.authTokenDao.create(user.alias);
+    return [user.dto, authToken.dto];
   }
 }
