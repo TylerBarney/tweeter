@@ -195,3 +195,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Add a DynamoDB FollowDao that pages follows, loads the matching users, and updates follow counts in one transaction. Include the DynamoDB SDK in the Lambda layer.
 - Review: Had to add query page options type for easier readability
+
+## 2026-11-23: tweeter-server/src/model/dao/dynamo/DynamoUserDao.ts (new file), tweeter-server/src/model/dao/dynamo/DynamoDao.ts, tweeter-server/src/model/dao/dynamo/DynamoFollowDao.ts, tweeter-server/package.json, tweeter-server/package-lock.json, tweeter-server/scripts/package-lambda.sh, reference/lambda-api.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add a DynamoDB UserDao that loads a user by alias and registers a new user when the alias is free. Password hashing is left for a later step.
+- Review: Implemented password hashing at first so I had to remove it.

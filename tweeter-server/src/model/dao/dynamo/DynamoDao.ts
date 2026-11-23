@@ -1,8 +1,10 @@
 // AI-assisted: see AI-ATTRIBUTION.md
+import { User } from "tweeter-shared";
 import {
   BatchGetCommand,
   DynamoDBDocumentClient,
   GetCommand,
+  PutCommand,
   QueryCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { DataPage } from "../DataPage";
@@ -74,6 +76,49 @@ export abstract class DynamoDao {
     );
 
     return result.Item as DynamoItem | undefined;
+  }
+
+  protected toUser(item: DynamoItem): User {
+    return new User(
+      String(item.firstName),
+      String(item.lastName),
+      String(item.alias),
+      String(item.imageUrl),
+    );
+  }
+
+  protected async putItem(
+    tableName: string,
+    item: DynamoItem,
+    condition?: string,
+  ): Promise<boolean> {
+    try {
+      await this.client.send(
+        new PutCommand({
+          TableName: tableName,
+          Item: item,
+          ...(condition === undefined
+            ? {}
+            : { ConditionExpression: condition }),
+        }),
+      );
+      return true;
+    } catch (error) {
+      if (this.errorName(error) === "ConditionalCheckFailedException") {
+        return false;
+      }
+
+      throw error;
+    }
+  }
+
+  protected errorName(error: unknown): string | undefined {
+    if (typeof error !== "object" || error === null) {
+      return undefined;
+    }
+
+    const name = (error as { name?: unknown }).name;
+    return typeof name === "string" ? name : undefined;
   }
 
   protected async batchGet(

@@ -3,7 +3,7 @@ import { User } from "tweeter-shared";
 import { TransactWriteCommand, TransactWriteCommandInput } from "@aws-sdk/lib-dynamodb";
 import { DataPage } from "../DataPage";
 import { FollowDao } from "../FollowDao";
-import { DynamoDao, DynamoItem } from "./DynamoDao";
+import { DynamoDao } from "./DynamoDao";
 import { getDocumentClient, requireEnv } from "./documentClient";
 
 type TransactItem = NonNullable<TransactWriteCommandInput["TransactItems"]>[number];
@@ -118,15 +118,6 @@ export class DynamoFollowDao extends DynamoDao implements FollowDao {
     });
   }
 
-  private toUser(item: DynamoItem): User {
-    return new User(
-      String(item.firstName),
-      String(item.lastName),
-      String(item.alias),
-      String(item.imageUrl),
-    );
-  }
-
   private async count(alias: string, attribute: string): Promise<number> {
     const item = await this.getItem(this.usersTable, { alias }, attribute);
     const value = item?.[attribute];
@@ -205,10 +196,9 @@ export class DynamoFollowDao extends DynamoDao implements FollowDao {
     }
 
     const candidate = error as {
-      name?: string;
       CancellationReasons?: { Code?: string }[];
     };
-    if (candidate.name !== "TransactionCanceledException") {
+    if (this.errorName(error) !== "TransactionCanceledException") {
       return undefined;
     }
 
