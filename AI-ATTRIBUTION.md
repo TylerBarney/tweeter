@@ -159,3 +159,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Revise the DynamoDB table keys to match the class design, and record the schemas in reference/dynamoDB.md instead of lambda-api.md and architecture.md.
 - Review: Had to make a change or two to the suggested table design. Also had to test deployment worked.
+
+## 2026-11-22: tweeter-server/src/model/dao/DataPage.ts (new file), tweeter-server/src/model/dao/FollowDao.ts (new file), AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add the database-agnostic FollowDao interface and the DataPage type its paged methods return.
+- Review: TODO
