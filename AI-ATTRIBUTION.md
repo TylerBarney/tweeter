@@ -182,4 +182,10 @@
 
 - Tool: Cursor (Grok 4.7)
 - Task: Add the StatusDao interface and route StatusService through it for story pages, feed pages, and posting a status.
+- Review: All looked good
+
+## 2026-11-22: tweeter-server/src/model/dao/defaultFactory.ts (new file), tweeter-server/src/model/dao/fake/FakeDao.ts (new file), tweeter-server/src/model/dao/fake/FakeUserDao.ts (new file), tweeter-server/src/model/dao/fake/FakeAuthTokenDao.ts (new file), tweeter-server/src/model/dao/fake/FakeFollowDao.ts (new file), tweeter-server/src/model/dao/fake/FakeStatusDao.ts (new file), tweeter-server/src/model/dao/fake/FakeImageDao.ts (new file), tweeter-server/src/model/dao/fake/FakeDaoFactory.ts (new file), reference/architecture.md, reference/lambda-api.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add the fake DAO implementations and the default factory that supplies them, and record in the reference docs that services read FakeData through those DAOs.
 - Review: TODO
