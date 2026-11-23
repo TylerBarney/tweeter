@@ -115,6 +115,8 @@ resource "aws_lambda_function" "handler" {
   runtime          = "nodejs24.x"
   role             = aws_iam_role.lambda.arn
   layers           = [aws_lambda_layer_version.dependencies.arn]
+  memory_size      = 256
+  timeout          = 15
 
   environment {
     variables = {

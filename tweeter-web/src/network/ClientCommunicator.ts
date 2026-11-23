@@ -32,24 +32,17 @@ export class ClientCommunicator {
 
     console.log(`Fetching '${url}' with params '${JSON.stringify(params)}'`);
 
-    try {
-      const resp: Response = await fetch(url, params);
+    const resp = await fetch(url, params);
 
-      if (resp.ok) {
-        const response: RES = await resp.json();
-        return response;
-      } else {
-        const error = await resp.json();
-        throw new Error(error.errorMessage);
-      }
-    } catch (error) {
-      console.error(error);
-      throw new Error(
-        `Client communicator ${params.method} failed:\n${
-          (error as Error).message
-        }`,
-      );
+    if (resp.ok) {
+      const response: RES = await resp.json();
+      return response;
     }
+
+    const error = await resp.json();
+    const message =
+      typeof error.errorMessage === "string" ? error.errorMessage : "";
+    throw new Error(message);
   }
 
   private getUrl(endpoint: string): string {

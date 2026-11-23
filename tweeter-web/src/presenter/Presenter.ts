@@ -1,3 +1,4 @@
+// AI-assisted: see AI-ATTRIBUTION.md
 export interface View {
   displayErrorMessage: (message: string) => void;
 }
@@ -10,6 +11,11 @@ export abstract class Presenter<V extends View> {
 
   protected get view() {
     return this._view;
+  }
+
+  private messageFor(error: unknown, operationDescription: string): string {
+    const message = (error instanceof Error ? error.message : "").trim();
+    return message.length > 0 ? message : `Could not ${operationDescription}`;
   }
 
   //functions as parameters allows us to remove duplicate code by factoring out alogrithms who
@@ -26,7 +32,7 @@ export abstract class Presenter<V extends View> {
       await operation();
     } catch (error) {
       this.view.displayErrorMessage(
-        `Failed to ${operationDescription} because of exception: ${(error as Error).message}`,
+        this.messageFor(error, operationDescription),
       );
     } finally {
       finallyOperation?.();

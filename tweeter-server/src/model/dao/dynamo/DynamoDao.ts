@@ -128,6 +128,7 @@ export abstract class DynamoDao {
     tableName: string,
     item: DynamoItem,
     condition?: string,
+    names?: Record<string, string>,
   ): Promise<boolean> {
     return this.write(() =>
       this.client.send(
@@ -137,6 +138,7 @@ export abstract class DynamoDao {
           ...(condition === undefined
             ? {}
             : { ConditionExpression: condition }),
+          ...(names === undefined ? {} : { ExpressionAttributeNames: names }),
         }),
       ),
     );

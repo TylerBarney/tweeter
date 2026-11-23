@@ -28,6 +28,11 @@ export class UserService extends Service {
     userImageBytes: string,
     imageFileExtension: string,
   ): Promise<[UserDto, AuthTokenDto]> {
+    const image = Buffer.from(userImageBytes, "base64");
+    if (image.length === 0 || !imageFileExtension.trim()) {
+      throw new Error("[Bad Request] A profile image is required");
+    }
+
     const imageUrl = await this.imageDao.putImage(
       `${alias}.${imageFileExtension}`,
       userImageBytes,

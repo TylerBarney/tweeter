@@ -1,3 +1,4 @@
+// AI-assisted: see AI-ATTRIBUTION.md
 import {
   anyString,
   anything,
@@ -66,7 +67,7 @@ describe("AppNavBarPresenter", () => {
     await appNavBarPresenter.logOut(authToken);
     verify(
       mockAppNavBarPresenterView.displayErrorMessage(
-        `Failed to log user out because of exception: An error occured`,
+        "An error occured",
       ),
     ).once();
     verify(mockAppNavBarPresenterView.deleteMessage(anyString())).never();

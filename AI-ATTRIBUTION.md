@@ -237,3 +237,27 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Move session renewal, follow rules, and API errors into the services, and collapse duplicate DAO reads for login, follow counts, and user hydration.
 - Review: Had to move auth-token expiration calculation and the expired-session check out of the Dynamo DAO and into AuthorizationService
+
+## 2026-11-23: terraform/lambda.tf, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Give the existing Lambdas 256 MB and a 15 second timeout so register, follow, and post can finish, and deploy that code.
+- Review: Looks good.
+
+## 2026-11-23: tweeter-server/src/model/dao/dynamo/DynamoDao.ts, tweeter-server/src/model/dao/dynamo/DynamoAuthTokenDao.ts, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Alias the reserved DynamoDB word token in auth-token conditions so creating and renewing a session succeeds.
+- Review: Took a second to review but it makes sense.
+
+## 2026-11-23: tweeter-web/src/presenter/Presenter.ts, tweeter-web/src/network/ClientCommunicator.ts, tweeter-web/test/presenter/AppNavBarPresenter.test.ts, tweeter-web/test/presenter/PostStatusPresenter.test.ts, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Show the server's error text in the toast, without the presenter wrapper, the communicator wrapper
+- Review: Had to change it to include the bad request and server errors tag.
+
+## 2026-11-23: tweeter-web/src/components/authentication/register/Register.tsx, tweeter-web/src/presenter/RegisterPresenter.ts, tweeter-server/src/model/service/UserService.ts, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Keep Register disabled until the profile image bytes are loaded, and reject an empty image before uploading it.
+- Review: Looks good.

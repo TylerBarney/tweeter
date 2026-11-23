@@ -25,7 +25,8 @@ export class DynamoAuthTokenDao extends DynamoDao implements AuthTokenDao {
         timestamp: authToken.timestamp,
         expiresAt,
       },
-      "attribute_not_exists(token)",
+      "attribute_not_exists(#token)",
+      { "#token": "token" },
     );
   }
 
@@ -55,12 +56,12 @@ export class DynamoAuthTokenDao extends DynamoDao implements AuthTokenDao {
   ): Promise<boolean> {
     return this.updateItem(this.authTokensTable, { token }, {
       expression: "SET #timestamp = :timestamp, expiresAt = :expiresAt",
-      names: { "#timestamp": "timestamp" },
+      names: { "#timestamp": "timestamp", "#token": "token" },
       values: {
         ":timestamp": timestamp,
         ":expiresAt": expiresAt,
       },
-      condition: "attribute_exists(token)",
+      condition: "attribute_exists(#token)",
     });
   }
 

@@ -1,3 +1,4 @@
+// AI-assisted: see AI-ATTRIBUTION.md
 import { Buffer } from "buffer";
 import {
   AuthenticationPresenter,
@@ -38,6 +39,7 @@ export class RegisterPresenter extends AuthenticationPresenter<RegisterView> {
   public handleImageFile(file: File | undefined) {
     if (file) {
       this.view.setImageUrl(URL.createObjectURL(file));
+      this.view.setImageBytes(new Uint8Array());
 
       const reader = new FileReader();
       reader.onload = (event: ProgressEvent<FileReader>) => {
@@ -64,6 +66,7 @@ export class RegisterPresenter extends AuthenticationPresenter<RegisterView> {
     } else {
       this.view.setImageUrl("");
       this.view.setImageBytes(new Uint8Array());
+      this.view.setImageFileExtension("");
     }
   }
 

@@ -1,3 +1,4 @@
+// AI-assisted: see AI-ATTRIBUTION.md
 import {
   anyString,
   anything,
@@ -71,7 +72,7 @@ describe("PostStatusPresenter", () => {
     verify(mockPostStatusView.deleteMessage("toastId")).once();
     verify(
       mockPostStatusView.displayErrorMessage(
-        `Failed to post the status because of exception: an error`,
+        "an error",
       ),
     ).once();
     verify(mockPostStatusView.setPost("")).never();

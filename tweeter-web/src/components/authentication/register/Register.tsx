@@ -1,3 +1,4 @@
+// AI-assisted: see AI-ATTRIBUTION.md
 import "./Register.css";
 import "bootstrap/dist/css/bootstrap.css";
 import { ChangeEvent, useState } from "react";
@@ -50,7 +51,8 @@ const Register = () => {
       !alias ||
       !password ||
       !imageUrl ||
-      !imageFileExtension
+      !imageFileExtension ||
+      imageBytes.length === 0
     );
   };
 
