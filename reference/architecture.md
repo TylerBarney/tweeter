@@ -2,7 +2,7 @@
 
 ## Current client
 
-The client calls the deployed API. The lambdas still return `FakeData`. Server services reach it through database-agnostic DAO interfaces, and the current implementations are the fake DAOs. Today the client looks like this:
+The client calls the deployed API. Server services reach data through database-agnostic DAO interfaces, and the default factory supplies the DynamoDB and S3 DAOs. The deployed lambdas still return `FakeData` until the next deploy. Today the client looks like this:
 
 ```
 view (React components and hooks)
@@ -52,7 +52,7 @@ Async service calls return to the presenter with async/await. The presenter neve
 
 POST `/followee/list`, POST `/follower/list`, POST `/followee/count`, POST `/follower/count`, POST `/follower/status`, POST `/follow`, POST `/unfollow`, POST `/user/get`, POST `/user/login`, POST `/user/register`, POST `/user/logout`, POST `/stories/list`, POST `/feed/list`, and POST `/status/post` are the live routes. API Gateway sends each JSON body to its Lambda as the event. The list handlers call the matching server service and still return `FakeData`. `GetFolloweeCount` and `GetFollowerCount` call `FollowService.getFolloweeCount` and `FollowService.getFollowerCount` and return a `FollowCountResponse`. `GetFollowerStatus` calls `FollowService.getIsFollowerStatus` and returns a `FollowerStatusResponse`. `Follow` and `Unfollow` call `FollowService.follow` and `FollowService.unfollow` and return a `FollowResponse`. `GetUser` calls `UserService.getUser` and returns a `UserResponse`. `Login` and `Register` call `UserService.login` and `UserService.register` and return an `AuthenticationResponse`. `Logout` calls `UserService.logout` and returns a `TweeterResponse`. `PostStatus` calls `StatusService.postStatus` and returns a `TweeterResponse`. The integration is `AWS`, not `AWS_PROXY`, so each handler takes a request DTO and returns a response DTO. HTTP 200 is that return value. HTTP 400 and 500 happen only when the Lambda throws `[Bad Request]` or `[Server Error]`.
 
-DynamoDB tables for users, auth tokens, follows, stories, and precomputed feeds exist, and so does the S3 bucket for profile images. The Lambda role can use them. Server services still return `FakeData` through the fake DAOs. Table keys and item attributes are in [dynamoDB.md](dynamoDB.md). Capacity and environment variables are in [lambda-api.md](lambda-api.md).
+DynamoDB tables for users, auth tokens, follows, stories, and precomputed feeds exist, and so does the S3 bucket for profile images. The Lambda role can use them. The source default factory supplies the DynamoDB and S3 DAOs. The deployed functions still run the previously packaged fake DAOs. Table keys and item attributes are in [dynamoDB.md](dynamoDB.md). Capacity and environment variables are in [lambda-api.md](lambda-api.md).
 
 Region, shared role, layer, zip layout, CORS, and the steps for the next route are in [lambda-api.md](lambda-api.md).
 
@@ -71,6 +71,6 @@ view → presenter → client service
 - `ServerFacade` has one method per endpoint, receives the shared request, and uses `ClientCommunicator` for the HTTP call. Client services build that request and return domain objects to presenters. They do not import the request or response types.
 - Server services go through DAOs. Users, sessions, follows, and statuses are stored in DynamoDB. Passwords are hashed. Profile images are stored on S3. Tokens expire after inactivity. Unauthorized calls fail at the API.
 - Posting a status updates the author's story and the feeds of current followers off the request path, so a large follower count does not make the post call fall over. A feed includes a status only when the viewer followed the author at post time. Older feed entries stay after an unfollow.
-- The fake DAOs return the same dummy data through the API. The client still must not touch `FakeData`. DynamoDB and S3 implementations of the DAO interfaces are the next data-access step.
+- The default factory supplies the DynamoDB and S3 DAOs. The client still must not touch `FakeData`.
 - Add Lambdas and routes in `terraform/`, reusing the role, layer, function zip, API, and `dev` stage. See [lambda-api.md](lambda-api.md).
 - Integration tests call the facade directly for register, a followers page, and a follow count, and call `StatusService` for a successful story page. Assert the returned data, not only that a call completed.

@@ -86,7 +86,7 @@ Do not add SQS unless the task asks for it. DynamoDB and the profile-image bucke
 
 ## Data stores
 
-Terraform in `terraform/data.tf` creates the tables and the bucket. Server services still return `FakeData` through the fake DAOs. Every Lambda receives the names in its environment.
+Terraform in `terraform/data.tf` creates the tables and the bucket. The default DAO factory supplies the DynamoDB and S3 implementations. Every Lambda receives the names in its environment. The deployed functions keep the previously packaged fake DAOs until the next package and apply.
 
 Provisioned capacity lives in `local.dynamodb_capacity`. The sum of read capacity and the sum of write capacity, including the followers index, stay at or under 25 so the account stays in the DynamoDB free tier. A check named `dynamodb_free_tier` rejects a plan that goes over. Raise a number only for a short pass-off, then put it back. Do not enable DAX. Do not add CloudWatch alarms for these tables. The free tier allows 8 alarms, and creating or editing a table in the console can recreate them.
 

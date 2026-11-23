@@ -1,5 +1,5 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import { DaoFactory } from "./DaoFactory";
-import { FakeDaoFactory } from "./fake/FakeDaoFactory";
+import { DynamoDaoFactory } from "./dynamo/DynamoDaoFactory";
 
-export const defaultDaoFactory: DaoFactory = new FakeDaoFactory();
+export const defaultDaoFactory: DaoFactory = new DynamoDaoFactory();

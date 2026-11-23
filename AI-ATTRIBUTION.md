@@ -213,3 +213,15 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Add a DynamoDB AuthTokenDao that creates a 30-minute session, renews it on lookup, rejects an expired token, and deletes it on logout.
 - Review: Removed unnecessary helpers.
+
+## 2026-11-23: tweeter-server/src/model/dao/dynamo/DynamoStatusDao.ts (new file), tweeter-server/src/model/dao/dynamo/DynamoDao.ts, tweeter-server/src/model/dao/dynamo/DynamoFollowDao.ts, tweeter-server/src/model/service/StatusService.ts, tweeter-server/src/model/dao/FollowDao.ts, tweeter-server/src/model/dao/StatusDao.ts, tweeter-server/src/model/dao/fake/FakeFollowDao.ts, tweeter-server/src/model/dao/fake/FakeStatusDao.ts, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add DynamoDB story and feed DAOs that page statuses newest first and copy a post into each follower's feed.
+- Review: Lots of small fixes with the factory, separating the FeedDao and StoryDao.
+
+## 2026-11-23: tweeter-server/src/model/dao/dynamo/DynamoDaoFactory.ts (new file), tweeter-server/src/model/dao/defaultFactory.ts, reference/architecture.md, reference/lambda-api.md, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add a Dynamo DAO factory that creates each DAO on first use, and make it the default factory.
+- Review: All looked good.
