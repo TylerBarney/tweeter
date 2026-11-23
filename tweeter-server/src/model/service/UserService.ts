@@ -29,7 +29,7 @@ export class UserService extends Service {
     }
 
     const user = await this.userDao.authenticate(alias, password);
-    return this.userAndToken(user, "Invalid alias or password");
+    return this.userAndToken(user, "[Bad Request] Invalid alias or password");
   }
 
   public async register(
@@ -51,7 +51,7 @@ export class UserService extends Service {
       password,
       imageUrl,
     );
-    return this.userAndToken(user, "Invalid registration");
+    return this.userAndToken(user, "[Bad Request] Invalid registration");
   }
 
   public async logout(token: string): Promise<void> {
