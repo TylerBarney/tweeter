@@ -6,10 +6,20 @@ export interface AuthSession {
   readonly alias: string;
 }
 
-export interface AuthTokenDao {
-  create(alias: string): Promise<AuthToken>;
+export interface AuthTokenRecord extends AuthSession {
+  readonly expiresAt: number;
+}
 
-  get(token: string): Promise<AuthSession | null>;
+export interface AuthTokenDao {
+  create(
+    authToken: AuthToken,
+    alias: string,
+    expiresAt: number,
+  ): Promise<boolean>;
+
+  get(token: string): Promise<AuthTokenRecord | null>;
+
+  renew(token: string, timestamp: number, expiresAt: number): Promise<boolean>;
 
   delete(token: string): Promise<void>;
 }

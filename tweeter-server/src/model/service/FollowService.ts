@@ -1,17 +1,14 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import { User, UserDto } from "tweeter-shared";
 import { DataPage } from "../dao/DataPage";
+import { FollowDao, FollowWriteResult } from "../dao/FollowDao";
 import { Service } from "./Service";
-import { FollowDao } from "../dao/FollowDao";
-import { AuthTokenDao } from "../dao/AuthTokenDao";
 
 export class FollowService extends Service {
   private followDao: FollowDao;
-  private authTokenDao: AuthTokenDao;
   constructor() {
     super();
     this.followDao = this.factory.followDao;
-    this.authTokenDao = this.factory.authTokenDao;
   }
   public loadMoreFollowees(
     token: string,
@@ -44,23 +41,22 @@ export class FollowService extends Service {
   }
 
   public async follow(
-    token: string,
+    followerAlias: string,
     userToFollow: UserDto,
   ): Promise<[followerCount: number, followeeCount: number]> {
     return this.changeFollow(
-      token,
+      followerAlias,
       userToFollow,
-      (followerAlias, followeeAlias) =>
-        this.followDao.follow(followerAlias, followeeAlias),
+      (follower, followee) => this.followDao.follow(follower, followee),
     );
   }
 
   public async unfollow(
-    token: string,
+    followerAlias: string,
     user: UserDto,
   ): Promise<[followerCount: number, followeeCount: number]> {
-    return this.changeFollow(token, user, (followerAlias, followeeAlias) =>
-      this.followDao.unfollow(followerAlias, followeeAlias),
+    return this.changeFollow(followerAlias, user, (follower, followee) =>
+      this.followDao.unfollow(follower, followee),
     );
   }
 
@@ -97,23 +93,40 @@ export class FollowService extends Service {
   }
 
   private async changeFollow(
-    token: string,
+    followerAlias: string,
     user: UserDto,
-    update: (followerAlias: string, followeeAlias: string) => Promise<void>,
+    update: (
+      followerAlias: string,
+      followeeAlias: string,
+    ) => Promise<FollowWriteResult>,
   ): Promise<[followerCount: number, followeeCount: number]> {
-    await this.pause(2000);
-    const session = await this.authTokenDao.get(token);
-    if (session !== null) {
-      await update(session.alias, user.alias);
+    if (followerAlias === user.alias) {
+      throw new Error("[Bad Request] A user cannot follow themselves");
     }
+
+    await this.pause(2000);
+    const result = await update(followerAlias, user.alias);
+    this.requireFollowWrite(result);
     return this.countsFor(user);
+  }
+
+  private requireFollowWrite(result: FollowWriteResult): void {
+    switch (result) {
+      case "ok":
+        return;
+      case "already-following":
+        throw new Error("[Bad Request] Already following this user");
+      case "not-following":
+        throw new Error("[Bad Request] Not following this user");
+      case "missing-user":
+        throw new Error("[Bad Request] User not found");
+    }
   }
 
   private async countsFor(
     user: UserDto,
   ): Promise<[followerCount: number, followeeCount: number]> {
-    const followerCount = await this.followDao.getFollowerCount(user.alias);
-    const followeeCount = await this.followDao.getFolloweeCount(user.alias);
-    return [followerCount, followeeCount];
+    const counts = await this.followDao.getFollowCounts(user.alias);
+    return [counts.followerCount, counts.followeeCount];
   }
 }

@@ -1,7 +1,7 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import { User } from "tweeter-shared";
-import { UserDao } from "../UserDao";
-import { DynamoDao } from "./DynamoDao";
+import { UserCredentials, UserDao } from "../UserDao";
+import { DynamoDao, DynamoItem } from "./DynamoDao";
 import { getDocumentClient, requireEnv } from "./documentClient";
 
 export class DynamoUserDao extends DynamoDao implements UserDao {
@@ -13,13 +13,19 @@ export class DynamoUserDao extends DynamoDao implements UserDao {
   }
 
   public async findByAlias(alias: string): Promise<User | null> {
-    const item = await this.getItem(this.usersTable, { alias });
+    const item = await this.userItem(alias);
     return item === undefined ? null : this.toUser(item);
   }
 
-  public async findPasswordHash(alias: string): Promise<string | null> {
-    const item = await this.getItem(this.usersTable, { alias });
-    return typeof item?.passwordHash === "string" ? item.passwordHash : null;
+  public async findByAliasWithPassword(
+    alias: string,
+  ): Promise<UserCredentials | null> {
+    const item = await this.userItem(alias);
+    if (item === undefined || typeof item.passwordHash !== "string") {
+      return null;
+    }
+
+    return { user: this.toUser(item), passwordHash: item.passwordHash };
   }
 
   public async register(
@@ -43,8 +49,10 @@ export class DynamoUserDao extends DynamoDao implements UserDao {
       "attribute_not_exists(alias)",
     );
 
-    return created
-      ? new User(firstName, lastName, alias, imageUrl)
-      : null;
+    return created ? new User(firstName, lastName, alias, imageUrl) : null;
+  }
+
+  private userItem(alias: string): Promise<DynamoItem | undefined> {
+    return this.getItem(this.usersTable, { alias });
   }
 }

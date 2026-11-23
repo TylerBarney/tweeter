@@ -1,7 +1,7 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import { User } from "tweeter-shared";
 import { DataPage } from "../DataPage";
-import { FollowDao } from "../FollowDao";
+import { FollowCounts, FollowDao, FollowWriteResult } from "../FollowDao";
 import { FakeDao } from "./FakeDao";
 
 export class FakeFollowDao extends FakeDao implements FollowDao {
@@ -35,12 +35,16 @@ export class FakeFollowDao extends FakeDao implements FollowDao {
   public async follow(
     _followerAlias: string,
     _followeeAlias: string,
-  ): Promise<void> {}
+  ): Promise<FollowWriteResult> {
+    return "ok";
+  }
 
   public async unfollow(
     _followerAlias: string,
     _followeeAlias: string,
-  ): Promise<void> {}
+  ): Promise<FollowWriteResult> {
+    return "ok";
+  }
 
   public async getFollowerCount(alias: string): Promise<number> {
     return this.data.getFollowerCount(alias);
@@ -48,6 +52,12 @@ export class FakeFollowDao extends FakeDao implements FollowDao {
 
   public async getFolloweeCount(alias: string): Promise<number> {
     return this.data.getFolloweeCount(alias);
+  }
+
+  public async getFollowCounts(alias: string): Promise<FollowCounts> {
+    const followerCount = await this.getFollowerCount(alias);
+    const followeeCount = await this.getFolloweeCount(alias);
+    return { followerCount, followeeCount };
   }
 
   private pageOfUsers(

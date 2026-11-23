@@ -2,7 +2,7 @@
 import { User } from "tweeter-shared";
 import { TransactWriteCommand, TransactWriteCommandInput } from "@aws-sdk/lib-dynamodb";
 import { DataPage } from "../DataPage";
-import { FollowDao } from "../FollowDao";
+import { FollowCounts, FollowDao, FollowWriteResult } from "../FollowDao";
 import { DynamoDao } from "./DynamoDao";
 import { getDocumentClient, requireEnv } from "./documentClient";
 
@@ -82,23 +82,30 @@ export class DynamoFollowDao extends DynamoDao implements FollowDao {
     return item !== undefined;
   }
 
-  public follow(followerAlias: string, followeeAlias: string): Promise<void> {
+  public follow(
+    followerAlias: string,
+    followeeAlias: string,
+  ): Promise<FollowWriteResult> {
     return this.writeFollow(followerAlias, followeeAlias, true);
   }
 
   public unfollow(
     followerAlias: string,
     followeeAlias: string,
-  ): Promise<void> {
+  ): Promise<FollowWriteResult> {
     return this.writeFollow(followerAlias, followeeAlias, false);
   }
 
-  public getFollowerCount(alias: string): Promise<number> {
-    return this.count(alias, "followerCount");
+  public async getFollowerCount(alias: string): Promise<number> {
+    return (await this.readCounts(alias)).followerCount;
   }
 
-  public getFolloweeCount(alias: string): Promise<number> {
-    return this.count(alias, "followeeCount");
+  public async getFolloweeCount(alias: string): Promise<number> {
+    return (await this.readCounts(alias)).followeeCount;
+  }
+
+  public getFollowCounts(alias: string): Promise<FollowCounts> {
+    return this.readCounts(alias);
   }
 
   private async pageOfUsers(
@@ -109,7 +116,7 @@ export class DynamoFollowDao extends DynamoDao implements FollowDao {
     sortKey: string,
     indexName?: string,
   ): Promise<DataPage<User>> {
-    const aliases = await this.queryPage<string>({
+    const page = await this.queryPage<string>({
       tableName: this.followsTable,
       indexName,
       partitionKey,
@@ -119,19 +126,24 @@ export class DynamoFollowDao extends DynamoDao implements FollowDao {
       startSortValue: lastUser === null ? undefined : lastUser.alias,
       mapItem: (item) => String(item[sortKey]),
     });
-    const users = await this.usersByAlias(this.usersTable, aliases.values);
-    return new DataPage(
-      aliases.values.flatMap((alias) => {
-        const user = users.get(alias);
-        return user === undefined ? [] : [user];
-      }),
-      aliases.hasMorePages,
+    const values = await this.mapWithUsers(
+      this.usersTable,
+      page.values,
+      (followAlias) => followAlias,
+      (_followAlias, user) => user,
     );
+    return new DataPage(values, page.hasMorePages);
   }
 
-  private async count(alias: string, attribute: string): Promise<number> {
-    const item = await this.getItem(this.usersTable, { alias }, attribute);
-    const value = item?.[attribute];
+  private async readCounts(alias: string): Promise<FollowCounts> {
+    const item = await this.getItem(this.usersTable, { alias });
+    return {
+      followerCount: this.countValue(item?.followerCount),
+      followeeCount: this.countValue(item?.followeeCount),
+    };
+  }
+
+  private countValue(value: unknown): number {
     return typeof value === "number" ? value : 0;
   }
 
@@ -139,11 +151,7 @@ export class DynamoFollowDao extends DynamoDao implements FollowDao {
     followerAlias: string,
     followeeAlias: string,
     following: boolean,
-  ): Promise<void> {
-    if (followerAlias === followeeAlias) {
-      throw new Error("[Bad Request] A user cannot follow themselves");
-    }
-
+  ): Promise<FollowWriteResult> {
     const delta = following ? 1 : -1;
     const edge: TransactItem = following
       ? {
@@ -171,10 +179,11 @@ export class DynamoFollowDao extends DynamoDao implements FollowDao {
           ],
         }),
       );
+      return "ok";
     } catch (error) {
-      const message = this.conditionalFailureMessage(error, following);
-      if (message !== undefined) {
-        throw new Error(message);
+      const result = this.followWriteResult(error, following);
+      if (result !== undefined) {
+        return result;
       }
 
       throw error;
@@ -198,10 +207,10 @@ export class DynamoFollowDao extends DynamoDao implements FollowDao {
     };
   }
 
-  private conditionalFailureMessage(
+  private followWriteResult(
     error: unknown,
     following: boolean,
-  ): string | undefined {
+  ): FollowWriteResult | undefined {
     if (typeof error !== "object" || error === null) {
       return undefined;
     }
@@ -215,13 +224,11 @@ export class DynamoFollowDao extends DynamoDao implements FollowDao {
 
     const reasons = candidate.CancellationReasons ?? [];
     if (reasons[0]?.Code === "ConditionalCheckFailed") {
-      return following
-        ? "[Bad Request] Already following this user"
-        : "[Bad Request] Not following this user";
+      return following ? "already-following" : "not-following";
     }
 
     if (reasons.some((reason) => reason.Code === "ConditionalCheckFailed")) {
-      return "[Bad Request] User not found";
+      return "missing-user";
     }
 
     return undefined;

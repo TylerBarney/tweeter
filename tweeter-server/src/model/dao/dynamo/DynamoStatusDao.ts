@@ -62,15 +62,12 @@ export abstract class DynamoStatusDao extends DynamoDao implements StatusDao {
     return { post: item.post, timestamp: item.timestamp, authorAlias };
   }
 
-  private async withUsers(rows: StatusRow[]): Promise<Status[]> {
-    const users = await this.usersByAlias(
+  private withUsers(rows: StatusRow[]): Promise<Status[]> {
+    return this.mapWithUsers(
       this.usersTable,
-      rows.map((row) => row.authorAlias),
+      rows,
+      (row) => row.authorAlias,
+      (row, user) => new Status(row.post, user, row.timestamp),
     );
-
-    return rows.flatMap((row) => {
-      const user = users.get(row.authorAlias);
-      return user === undefined ? [] : [new Status(row.post, user, row.timestamp)];
-    });
   }
 }

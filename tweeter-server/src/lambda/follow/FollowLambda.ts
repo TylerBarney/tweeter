@@ -2,6 +2,6 @@
 import { FollowService } from "../../model/service/FollowService";
 import { createFollowHandler } from "./FollowHandler";
 
-export const handler = createFollowHandler((token, user) =>
-  new FollowService().follow(token, user),
+export const handler = createFollowHandler((followerAlias, user) =>
+  new FollowService().follow(followerAlias, user),
 );

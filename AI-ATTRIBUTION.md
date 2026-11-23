@@ -231,3 +231,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Hash passwords with bcryptjs, and require a valid session in every Lambda that receives a token.
 - Review: Moved password hashing into the service, rather than the dao because I want it to live in one place.
+
+## 2026-11-23: tweeter-server/src/model/dao/AuthTokenDao.ts, tweeter-server/src/model/dao/dynamo/DynamoAuthTokenDao.ts, tweeter-server/src/model/dao/fake/FakeAuthTokenDao.ts, tweeter-server/src/model/service/AuthorizationService.ts, tweeter-server/src/model/dao/UserDao.ts, tweeter-server/src/model/dao/dynamo/DynamoUserDao.ts, tweeter-server/src/model/dao/fake/FakeUserDao.ts, tweeter-server/src/model/dao/FollowDao.ts, tweeter-server/src/model/dao/dynamo/DynamoFollowDao.ts, tweeter-server/src/model/dao/fake/FakeFollowDao.ts, tweeter-server/src/model/dao/dynamo/DynamoDao.ts, tweeter-server/src/model/dao/dynamo/DynamoStatusDao.ts, tweeter-server/src/model/service/FollowService.ts, tweeter-server/src/lambda/follow/FollowHandler.ts, tweeter-server/src/lambda/follow/FollowLambda.ts, tweeter-server/src/lambda/follow/UnfollowLambda.ts, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Move session renewal, follow rules, and API errors into the services, and collapse duplicate DAO reads for login, follow counts, and user hydration.
+- Review: Had to move auth-token expiration calculation and the expired-session check out of the Dynamo DAO and into AuthorizationService

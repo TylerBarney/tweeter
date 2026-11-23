@@ -3,16 +3,16 @@ import { FollowRequest, FollowResponse, UserDto } from "tweeter-shared";
 import { authorizeRequest } from "../authorizeRequest";
 
 type RelationshipUpdater = (
-  token: string,
+  followerAlias: string,
   user: UserDto,
 ) => Promise<[followerCount: number, followeeCount: number]>;
 
 export const createFollowHandler =
   (updateRelationship: RelationshipUpdater) =>
   async (request: FollowRequest): Promise<FollowResponse> => {
-    await authorizeRequest(request);
+    const session = await authorizeRequest(request);
     const [followerCount, followeeCount] = await updateRelationship(
-      request.token,
+      session.alias,
       request.user,
     );
     return {

@@ -15,6 +15,7 @@ import { DataPage } from "../DataPage";
 export type DynamoItem = Record<string, unknown>;
 
 const BATCH_WRITE_LIMIT = 25;
+const BATCH_GET_LIMIT = 100;
 
 type QueryPageOptions<T> = {
   tableName: string;
@@ -103,18 +104,11 @@ export abstract class DynamoDao {
   protected async getItem(
     tableName: string,
     key: DynamoItem,
-    projection?: string,
   ): Promise<DynamoItem | undefined> {
     const result = await this.client.send(
       new GetCommand({
         TableName: tableName,
         Key: key,
-        ...(projection === undefined
-          ? {}
-          : {
-              ProjectionExpression: "#attr",
-              ExpressionAttributeNames: { "#attr": projection },
-            }),
       }),
     );
 
@@ -234,6 +228,19 @@ export abstract class DynamoDao {
     return new Map(items.map((item) => [String(item.alias), this.toUser(item)]));
   }
 
+  protected async mapWithUsers<T, R>(
+    usersTable: string,
+    items: T[],
+    aliasOf: (item: T) => string,
+    build: (item: T, user: User) => R,
+  ): Promise<R[]> {
+    const users = await this.usersByAlias(usersTable, items.map(aliasOf));
+    return items.flatMap((item) => {
+      const user = users.get(aliasOf(item));
+      return user === undefined ? [] : [build(item, user)];
+    });
+  }
+
   protected async batchWrite(
     tableName: string,
     items: DynamoItem[],
@@ -264,17 +271,22 @@ export abstract class DynamoDao {
     let pending = keys;
 
     while (pending.length > 0) {
-      const result = await this.client.send(
-        new BatchGetCommand({
-          RequestItems: {
-            [tableName]: { Keys: pending },
-          },
-        }),
-      );
+      let request = pending.slice(0, BATCH_GET_LIMIT);
+      pending = pending.slice(BATCH_GET_LIMIT);
 
-      items.push(...((result.Responses?.[tableName] ?? []) as DynamoItem[]));
-      pending = (result.UnprocessedKeys?.[tableName]?.Keys ??
-        []) as DynamoItem[];
+      while (request.length > 0) {
+        const result = await this.client.send(
+          new BatchGetCommand({
+            RequestItems: {
+              [tableName]: { Keys: request },
+            },
+          }),
+        );
+
+        items.push(...((result.Responses?.[tableName] ?? []) as DynamoItem[]));
+        request = (result.UnprocessedKeys?.[tableName]?.Keys ??
+          []) as DynamoItem[];
+      }
     }
 
     return items;

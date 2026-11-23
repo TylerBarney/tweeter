@@ -1,6 +1,6 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import { User } from "tweeter-shared";
-import { UserDao } from "../UserDao";
+import { UserCredentials, UserDao } from "../UserDao";
 import { FakeDao } from "./FakeDao";
 
 export class FakeUserDao extends FakeDao implements UserDao {
@@ -8,7 +8,9 @@ export class FakeUserDao extends FakeDao implements UserDao {
     return this.data.findUserByAlias(alias);
   }
 
-  public async findPasswordHash(_alias: string): Promise<string | null> {
+  public async findByAliasWithPassword(
+    _alias: string,
+  ): Promise<UserCredentials | null> {
     return null;
   }
 
