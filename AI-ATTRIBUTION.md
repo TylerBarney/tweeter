@@ -207,3 +207,9 @@
 - Tool: Cursor (Grok 4.7)
 - Task: Add an S3 ImageDao in the Dynamo package that stores a public profile image and returns its URL.
 - Review: Had to fix the error handling for putting an image.
+
+## 2026-11-23: tweeter-server/src/model/dao/dynamo/DynamoAuthTokenDao.ts (new file), tweeter-server/src/model/dao/dynamo/DynamoDao.ts, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add a DynamoDB AuthTokenDao that creates a 30-minute session, renews it on lookup, rejects an expired token, and deletes it on logout.
+- Review: Removed unnecessary helpers.

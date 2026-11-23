@@ -2,10 +2,12 @@
 import { User } from "tweeter-shared";
 import {
   BatchGetCommand,
+  DeleteCommand,
   DynamoDBDocumentClient,
   GetCommand,
   PutCommand,
   QueryCommand,
+  UpdateCommand,
 } from "@aws-sdk/lib-dynamodb";
 import { DataPage } from "../DataPage";
 
@@ -87,13 +89,13 @@ export abstract class DynamoDao {
     );
   }
 
-  protected async putItem(
+  protected putItem(
     tableName: string,
     item: DynamoItem,
     condition?: string,
   ): Promise<boolean> {
-    try {
-      await this.client.send(
+    return this.write(() =>
+      this.client.send(
         new PutCommand({
           TableName: tableName,
           Item: item,
@@ -101,7 +103,55 @@ export abstract class DynamoDao {
             ? {}
             : { ConditionExpression: condition }),
         }),
-      );
+      ),
+    );
+  }
+
+  protected updateItem(
+    tableName: string,
+    key: DynamoItem,
+    options: {
+      expression: string;
+      names?: Record<string, string>;
+      values?: DynamoItem;
+      condition?: string;
+    },
+  ): Promise<boolean> {
+    return this.write(() =>
+      this.client.send(
+        new UpdateCommand({
+          TableName: tableName,
+          Key: key,
+          UpdateExpression: options.expression,
+          ...(options.names === undefined
+            ? {}
+            : { ExpressionAttributeNames: options.names }),
+          ...(options.values === undefined
+            ? {}
+            : { ExpressionAttributeValues: options.values }),
+          ...(options.condition === undefined
+            ? {}
+            : { ConditionExpression: options.condition }),
+        }),
+      ),
+    );
+  }
+
+  protected async deleteItem(
+    tableName: string,
+    key: DynamoItem,
+  ): Promise<void> {
+    await this.client.send(
+      new DeleteCommand({
+        TableName: tableName,
+        Key: key,
+      }),
+    );
+  }
+
+  private async write(send: () => Promise<unknown>): Promise<boolean> {
+    try {
+      await send();
       return true;
     } catch (error) {
       if (this.errorName(error) === "ConditionalCheckFailedException") {
