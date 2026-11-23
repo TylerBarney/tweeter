@@ -262,8 +262,20 @@
 - Task: Keep Register disabled until the profile image bytes are loaded, and reject an empty image before uploading it.
 - Review: Looks good.
 
+## 2026-11-23: tweeter-web/test/integration/liveApi.ts (new file), tweeter-web/test/network/ServerFacade.integration.test.ts, tweeter-web/test/model.service/StatusService.integration.test.ts, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Rewrite the integration tests so they register users, create follows and statuses, and assert those results instead of FakeData.
+- Review: Looks good.
+
 ## 2026-11-23: tweeter-server/src/model/apiError.ts (new file), tweeter-server/src/lambda/withApiErrors.ts (new file), tweeter-server/src/lambda/user/AuthenticationHandler.ts, tweeter-server/src/lambda/PagedItemHandler.ts, tweeter-server/src/lambda/follow/FollowHandler.ts, tweeter-server/src/lambda/follow/FollowCountHandler.ts, tweeter-server/src/lambda/follow/GetFollowerStatusLambda.ts, tweeter-server/src/lambda/status/PostStatusLambda.ts, tweeter-server/src/lambda/user/GetUserLambda.ts, tweeter-server/src/lambda/user/LogoutLambda.ts, tweeter-server/src/model/service/AuthorizationService.ts, tweeter-server/src/model/service/FollowService.ts, tweeter-server/src/model/service/UserService.ts, tweeter-server/src/model/dao/dynamo/S3ImageDao.ts, AI-ATTRIBUTION.md
 
 - Tool: Cursor (Grok 4.7)
 - Task: Wrap every Lambda handler so request errors stay visible and other failures are logged and returned as one server error. Reject a taken alias and blank registration fields before the profile image is uploaded.
 - Review: Had to move around some of the handler logic. Had to change some of the errors thrown.
+
+## 2026-11-23: tweeter-web/package.json, tweeter-web/test/integration/cleanup.ts (new file), tweeter-web/test/integration/deleteCreatedUsers.js (new file), tweeter-web/test/integration/liveApi.ts, tweeter-web/test/network/ServerFacade.integration.test.ts, tweeter-web/test/model.service/StatusService.integration.test.ts, package-lock.json, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Delete the users, sessions, follows, statuses, and profile images created by the integration tests when those tests finish.
+- Review: Fixed some of the tests

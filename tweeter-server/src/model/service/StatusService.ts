@@ -33,7 +33,6 @@ export class StatusService extends Service {
   }
 
   public async postStatus(token: string, newStatus: StatusDto): Promise<void> {
-    await this.pause(2000);
     const status = Status.fromDto(newStatus);
     if (status === null) {
       return;

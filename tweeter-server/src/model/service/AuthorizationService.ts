@@ -76,7 +76,6 @@ export class AuthorizationService extends Service {
   }
 
   public async logout(token: string): Promise<void> {
-    await this.pause(1000);
     await this.authTokenDao.delete(token);
   }
 

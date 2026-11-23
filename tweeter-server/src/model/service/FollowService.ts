@@ -105,7 +105,6 @@ export class FollowService extends Service {
       badRequest("A user cannot follow themselves");
     }
 
-    await this.pause(2000);
     const result = await update(followerAlias, user.alias);
     this.requireFollowWrite(result);
     return this.countsFor(user);

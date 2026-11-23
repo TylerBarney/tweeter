@@ -13,8 +13,4 @@ export abstract class Service {
     const page = await load();
     return [page.values.map(toDto), page.hasMorePages];
   }
-
-  protected pause(milliseconds: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, milliseconds));
-  }
 }

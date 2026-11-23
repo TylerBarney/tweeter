@@ -1,103 +1,150 @@
 // AI-assisted: see AI-ATTRIBUTION.md
 import "isomorphic-fetch";
-import { FakeData, User } from "tweeter-shared";
+import { User } from "tweeter-shared";
 import { ServerFacade } from "../../src/network/ServerFacade";
+import {
+  PAGE_SIZE,
+  RegisteredUser,
+  alias,
+  createLiveApi,
+  describeUser,
+  uniqueSuffix,
+} from "../integration/liveApi";
 
-jest.setTimeout(20000);
+jest.setTimeout(90000);
 
 const serverFacade = new ServerFacade();
-const allen = FakeData.instance.firstUser!;
-const token = "integration-test-token";
+const api = createLiveApi(serverFacade);
+
+afterAll(async () => {
+  await api.cleanup();
+});
 
 describe("ServerFacade integration", () => {
-  it("registers Allen Anderson and returns an auth token", async () => {
-    const [user, authToken] = await serverFacade.register({
-      firstName: "Test",
-      lastName: "User",
-      alias: "@test",
-      password: "password",
-      userImageBytes: "aGVsbG8=",
-      imageFileExtension: "png",
-    });
+  it("registers the submitted user and returns an auth token", async () => {
+    const userAlias = alias("register", uniqueSuffix());
+    const { user, authToken } = await api.registerUser(
+      userAlias,
+      "Test",
+      "User",
+    );
 
-    expect(user.name).toBe("Allen Anderson");
-    expect(user.alias).toBe("@allen");
-    expect(user.imageUrl).toBe(allen.imageUrl);
+    expect(user.name).toBe("Test User");
+    expect(user.alias).toBe(userAlias);
+    expect(user.imageUrl).toContain(`${userAlias}.png`);
     expect(authToken.token.length).toBeGreaterThan(0);
     expect(authToken.timestamp).toBeGreaterThan(0);
   });
 
-  it("returns the first page of followers", async () => {
-    const [followers, hasMore] = await expectFollowerPage(null);
+  describe("followers", () => {
+    let followee: RegisteredUser;
+    let followers: RegisteredUser[];
 
-    expect(hasMore).toBe(true);
-    expect(followers[0].alias).toBe("@amy");
-  });
-
-  it("returns every follower page until there are no more", async () => {
-    let lastItem: User | null = null;
-    let hasMore = true;
-    const aliases: string[] = [];
-
-    while (hasMore) {
-      const [followers, more]: [User[], boolean] =
-        await expectFollowerPage(lastItem);
-
-      expect(followers.length).toBeGreaterThan(0);
-      aliases.push(...followers.map((follower) => follower.alias));
-      lastItem = followers[followers.length - 1];
-      hasMore = more;
-      expect(aliases.length).toBeLessThanOrEqual(
-        FakeData.instance.fakeUsers.length,
+    beforeAll(async () => {
+      const suffix = uniqueSuffix();
+      followee = await api.registerUser(
+        alias("z", suffix),
+        "Follow",
+        "Target",
       );
-    }
+      followers = [];
 
-    expect(hasMore).toBe(false);
-    expect(aliases).toEqual(
-      FakeData.instance.fakeUsers
-        .filter((user) => user.alias !== allen.alias)
-        .map((user) => user.alias),
-    );
+      for (const label of ["a", "b", "c"]) {
+        const follower = await api.registerUser(
+          alias(label, suffix),
+          label.toUpperCase(),
+          "Follower",
+        );
+        await serverFacade.follow({
+          token: follower.authToken.token,
+          user: followee.user.dto,
+        });
+        followers.push(follower);
+      }
+    });
+
+    it("returns the first page of followers", async () => {
+      const [page, hasMore] = await loadFollowers(null);
+
+      expect(hasMore).toBe(true);
+      expect(page.map(describeUser)).toEqual(
+        followers.slice(0, PAGE_SIZE).map((follower) => describeUser(follower.user)),
+      );
+      expect(page.some((follower) => follower.alias === followee.user.alias)).toBe(
+        false,
+      );
+    });
+
+    it("returns every follower page until there are no more", async () => {
+      let lastItem: User | null = null;
+      let hasMore = true;
+      const aliases: string[] = [];
+
+      while (hasMore) {
+        const [page, more]: [User[], boolean] = await loadFollowers(lastItem);
+
+        expect(page.length).toBeGreaterThan(0);
+        aliases.push(...page.map((follower) => follower.alias));
+        lastItem = page[page.length - 1];
+        hasMore = more;
+        expect(aliases.length).toBeLessThanOrEqual(followers.length);
+      }
+
+      expect(hasMore).toBe(false);
+      expect(aliases).toEqual(followers.map((follower) => follower.user.alias));
+    });
+
+    function loadFollowers(
+      lastItem: User | null,
+    ): Promise<[User[], boolean]> {
+      return serverFacade.getMoreFollowers({
+        token: followee.authToken.token,
+        alias: followee.user.alias,
+        pageSize: PAGE_SIZE,
+        lastItem: lastItem === null ? null : lastItem.dto,
+      });
+    }
   });
 
-  it("returns a positive followee count and follower count", async () => {
-    const request = { token, user: allen.dto };
+  it("returns follow counts for the relationships it creates", async () => {
+    const suffix = uniqueSuffix();
+    const user = await api.registerUser(
+      alias("count", suffix),
+      "Count",
+      "User",
+    );
+    const other = await api.registerUser(
+      alias("other", suffix),
+      "Other",
+      "User",
+    );
 
-    const followeeCount = await serverFacade.getFolloweeCount(request);
-    const followerCount = await serverFacade.getFollowerCount(request);
+    expect(await followerCount(user)).toBe(0);
+    expect(await followeeCount(user)).toBe(0);
 
-    expect(followeeCount).toBeGreaterThan(0);
-    expect(followeeCount).toBeLessThanOrEqual(10);
-    expect(followerCount).toBeGreaterThan(0);
-    expect(followerCount).toBeLessThanOrEqual(10);
+    const [followerCountAfterFollow, followeeCountAfterFollow] =
+      await serverFacade.follow({
+        token: other.authToken.token,
+        user: user.user.dto,
+      });
+
+    expect(followerCountAfterFollow).toBe(1);
+    expect(followeeCountAfterFollow).toBe(0);
+    expect(await followerCount(user)).toBe(1);
+    expect(await followeeCount(other)).toBe(1);
   });
 });
 
-async function expectFollowerPage(
-  lastItem: User | null,
-): Promise<[User[], boolean]> {
-  const [expectedFollowers, expectedHasMore] = FakeData.instance.getPageOfUsers(
-    lastItem,
-    10,
-    allen.alias,
-  );
-  const [followers, hasMore] = await serverFacade.getMoreFollowers({
-    token,
-    alias: allen.alias,
-    pageSize: 10,
-    lastItem: lastItem === null ? null : lastItem.dto,
+function followerCount(registered: RegisteredUser): Promise<number> {
+  return serverFacade.getFollowerCount({
+    token: registered.authToken.token,
+    user: registered.user.dto,
   });
-
-  expect(hasMore).toBe(expectedHasMore);
-  expect(followers.map(describeUser)).toEqual(
-    expectedFollowers.map(describeUser),
-  );
-  expect(followers.some((follower) => follower.alias === allen.alias)).toBe(
-    false,
-  );
-  return [followers, hasMore];
 }
 
-function describeUser(user: User): string {
-  return `${user.name} ${user.alias} ${user.imageUrl}`;
+function followeeCount(registered: RegisteredUser): Promise<number> {
+  return serverFacade.getFolloweeCount({
+    token: registered.authToken.token,
+    user: registered.user.dto,
+  });
 }

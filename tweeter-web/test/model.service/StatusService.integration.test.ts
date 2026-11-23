@@ -9,15 +9,50 @@ import {
   verify,
   when,
 } from "@typestrong/ts-mockito";
-import { AuthToken, FakeData, Status } from "tweeter-shared";
+import { AuthToken, Status, User } from "tweeter-shared";
 import { ServerFacade } from "../../src/network/ServerFacade";
 import { StatusService } from "../../src/model.service/StatusService";
+import {
+  PAGE_SIZE,
+  alias,
+  createLiveApi,
+  uniqueSuffix,
+} from "../integration/liveApi";
 
-jest.setTimeout(30000);
+jest.setTimeout(90000);
 
-const authToken = new AuthToken("integration-test-token", Date.now());
+const api = createLiveApi();
+
+afterAll(async () => {
+  await api.cleanup();
+});
+
+const posts = ["oldest post", "middle post", "newest post"];
 let statusService: StatusService;
 let facadeSpy: ServerFacade;
+let user: User;
+let authToken: AuthToken;
+let timestamps: number[];
+
+beforeAll(async () => {
+  const registered = await api.registerUser(
+    alias("story", uniqueSuffix()),
+    "Story",
+    "Author",
+  );
+  user = registered.user;
+  authToken = registered.authToken;
+  const base = Date.now();
+  timestamps = posts.map((_, index) => base + index * 1000);
+
+  const writer = new StatusService();
+  for (let index = 0; index < posts.length; index++) {
+    await writer.postStatus(
+      authToken,
+      new Status(posts[index], user, timestamps[index]),
+    );
+  }
+});
 
 beforeEach(() => {
   const realService = new StatusService();
@@ -29,52 +64,55 @@ beforeEach(() => {
 
 describe("StatusService integration", () => {
   it("returns a page of story statuses", async () => {
-    await expectStoryPage(null);
+    const [items, hasMore] = await expectStoryPage(null);
+
+    expect(hasMore).toBe(true);
+    expect(items.map(describeStatus)).toEqual(
+      expectedStatuses().slice(0, PAGE_SIZE).map(describeStatus),
+    );
   });
 
   it("returns every story page until there are no more", async () => {
     let lastItem: Status | null = null;
     let hasMore = true;
-    const posts: string[] = [];
+    const seen: string[] = [];
+    const expected = expectedStatuses();
 
     while (hasMore) {
-      const [items, more]: [Status[], boolean] =
-        await expectStoryPage(lastItem);
+      const [items, more]: [Status[], boolean] = await expectStoryPage(lastItem);
 
       expect(items.length).toBeGreaterThan(0);
-      posts.push(...items.map((status) => status.post));
+      seen.push(...items.map(describeStatus));
       lastItem = items[items.length - 1];
       hasMore = more;
-      expect(posts.length).toBeLessThanOrEqual(
-        FakeData.instance.fakeStatuses.length,
-      );
+      expect(seen.length).toBeLessThanOrEqual(expected.length);
     }
 
     expect(hasMore).toBe(false);
-    expect(posts).toEqual(
-      FakeData.instance.fakeStatuses.map((status) => status.post),
-    );
+    expect(seen).toEqual(expected.map(describeStatus));
   });
 });
+
+function expectedStatuses(): Status[] {
+  return posts
+    .map((post, index) => new Status(post, user, timestamps[index]))
+    .reverse();
+}
 
 async function expectStoryPage(
   lastItem: Status | null,
 ): Promise<[Status[], boolean]> {
-  const [expectedItems, expectedHasMore] = FakeData.instance.getPageOfStatuses(
-    lastItem,
-    10,
-  );
   const [items, hasMore] = await statusService.loadMoreStoryItems(
     authToken,
-    "@allen",
-    10,
+    user.alias,
+    PAGE_SIZE,
     lastItem,
   );
 
   const request = {
     token: authToken.token,
-    alias: "@allen",
-    pageSize: 10,
+    alias: user.alias,
+    pageSize: PAGE_SIZE,
     lastItem: lastItem === null ? null : lastItem.dto,
   };
   verify(facadeSpy.getMoreStoryItems(deepEqual(request))).once();
@@ -82,8 +120,6 @@ async function expectStoryPage(
   const [capturedRequest] = capture(facadeSpy.getMoreStoryItems).last();
   expect(capturedRequest).toEqual(request);
 
-  expect(hasMore).toBe(expectedHasMore);
-  expect(items.map(describeStatus)).toEqual(expectedItems.map(describeStatus));
   return [items, hasMore];
 }
 
