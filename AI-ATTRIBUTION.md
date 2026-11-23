@@ -164,4 +164,10 @@
 
 - Tool: Cursor (Grok 4.7)
 - Task: Add the database-agnostic FollowDao interface and the DataPage type its paged methods return.
+- Review: Looked good.
+
+## 2026-11-22: tweeter-server/src/model/dao/DaoFactory.ts (new file), tweeter-server/src/model/service/Service.ts, tweeter-server/src/model/service/FollowService.ts, AI-ATTRIBUTION.md
+
+- Tool: Cursor (Grok 4.7)
+- Task: Add the DaoFactory and route FollowService through the shared Service base so follow operations receive their DAOs from the factory.
 - Review: TODO
